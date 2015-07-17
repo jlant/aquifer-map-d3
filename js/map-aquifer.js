@@ -109,11 +109,11 @@ d3.csv("data/2010-us-total-wateruse.csv", function(wateruse_data) {
 			})
 			.on("click", function(d) {	// display a tooltip
 		  		return tooltip.style("visibility", "visible")
-		  				.style("top", (event.pageY + 10) + "px").style("left", (event.pageX + 10) + "px")
+		  				.style("top", (d3.event.pageY + 10) + "px").style("left", (d3.event.pageX + 10) + "px")
 		  				.text(d.properties.name + " = " + d.properties.value + " mgd");
 		  	})
 		  	.on("mousemove", function() {
-		  		return tooltip.style("top", (event.pageY + 10) + "px").style("left", (event.pageX + 10) + "px");
+		  		return tooltip.style("top", (d3.event.pageY + 10) + "px").style("left", (d3.event.pageX + 10) + "px");
 		  	})
 		
 		var keys = legend.selectAll("li.key")
