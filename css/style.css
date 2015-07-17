@@ -1,0 +1,78 @@
+svg {
+	fill: none;
+	stroke: black;
+}
+
+.tooltip {
+	position: absolute;
+	background: black;
+	padding: 4px;
+	font: 12px sans-serif;
+	color: white;
+	opacity: 0.9;
+	border: 0px;
+	border-radius: 4px;
+	visibility: hidden;
+}
+
+.title-logo {
+    margin-top: 20px;
+}
+
+#legend {
+    padding: 1.5em 0 0 1.5em;
+}
+
+li.key {
+    border-top-width: 15px;
+    border-top-style: solid;
+/*    font-size: .75em;*/
+    width: 10%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.bar {
+    fill: steelblue;
+    fill-opactiy: 0.9;
+    stroke: none;
+}
+
+.bar:hover {
+    fill: orange;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 13px;
+    fill: black;
+    stroke: none;
+}
+
+.x.axis path {
+    display: none;
+}
+
+
+.tooltip-bar {
+    position: absolute;
+    background: black;
+    padding: 4px;
+    font: 12px sans-serif;
+    color: white;
+    opacity: 0.9;
+    border: 0px;
+    border-radius: 4px;
+    visibility: hidden;
+}
+
+.checkbox-sort {
+    font-size: 16px;
+}
