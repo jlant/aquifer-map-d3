@@ -44,6 +44,21 @@ d3.json("data/PMAS_model_boundary.json", function(error, json) {
 		.enter()
 		.append("path")
 		.attr("d", path);
+	
+	svg.selectAll("path")
+		.data(json.features)
+		.on("mouseover", function(d) {
+			d3.select(this)
+				.transition().duration(100)
+				.attr("fill", "yellow")
+				.attr("stroke-width", 3);
+		})
+		.on("mouseout", function(d) {
+				d3.select(this)
+					.transition().duration(100)
+					.attr("fill", "white")
+					.attr("stroke-width", 1);
+		})
 });
 
 function zoomed() {
