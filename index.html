@@ -14,36 +14,30 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 text-center">
-                <h1>Interactive Aquifer Map</h1>             
+                <h1>Interactive Aquifer Map</h1>
             </div>
         </div>
-        
+
         <hr>
-		
+
 		<div class="row">
-           <div class="col-md-12">
+            <div class="col-md-12">
                 <p>Select a map:</p>
-                <div id='map-nav' class="btn-group" data-toggle="buttons">
-                    <label class="btn btn-default active">
-                        <input type="radio" name="options" id="btn-precip" autocomplete="off"> Button 1
-                    </label>
-                    <label class="btn btn-default">
-                        <input type="radio" name="options" id="btn-et" autocomplete="off"> Button 2
-                    </label>
-                    <label class="btn btn-default">
-                        <input type="radio" name="options" id="btn-recharge" autocomplete="off"> Button 3
-                    </label>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default" id="btn-precip">Precip</button>
+                    <button type="button" class="btn btn-default" id="btn-et">ET</button>
+                    <button type="button" class="btn btn-default" id="btn-recharge">Recharge</button>
                 </div>
             </div>
 		</div>
-		
+
         <div class="row">
             <div class="col-md-12" id="map-aquifer">
             </div>
         </div>
-		
+
         <hr>
-		
+
         <div class="row">
             <div class="col-md-12">
                 <h2>Description</h2>
@@ -69,9 +63,9 @@
 				<script type="text/javascript" src="js/browserInfo.js"></script>
             </div>
         </div>
-		
+
 		<hr>
-		
+
     </div>
     <script type="text/javascript" src="js/map-aquifer.js"></script>
 </body>

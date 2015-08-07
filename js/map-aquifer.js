@@ -44,7 +44,7 @@ svg
 d3.json("data/PMAS_model_boundary_Geo.json", function(error, json) {
 
 	if (error) { return console.error(error) };
-    console.log("hello#1");	
+    console.log("hello#1");
 
 	// bind the data and create one path for each geojson feature
 	g.selectAll("path")
@@ -52,7 +52,7 @@ d3.json("data/PMAS_model_boundary_Geo.json", function(error, json) {
 		.enter()
 		.append("path")
 		.attr("d", path);
-	
+
 	g.selectAll("path")
 		.data(json.features)
 		.on("mouseover", function(d) {
@@ -102,3 +102,17 @@ legend.append("text")
     .attr("x", 50)
     .attr("y", function(d, i){ return mapHeight - (i*ls_h) - ls_h - 4;})
     .text(function(d, i){ return legend_labels[i]; });
+
+
+// adding click events to group buttons
+$( "#btn-precip" ).click(function() {
+  alert( "precip button clicked!" );
+});
+
+$( "#btn-et" ).click(function() {
+  alert( "et button clicked!" );
+});
+
+$( "#btn-recharge" ).click(function() {
+  alert( "recharge button clicked!" );
+});
