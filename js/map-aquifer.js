@@ -10,7 +10,7 @@ var projection = d3.geo.albersUsa()
 	.translate([mapWidth / 15, mapHeight / 2])
 	.scale([3000]);
 
-// create zoom behavior
+// create zoom and pan functionality
 var zoom = d3.behavior.zoom()
     .translate([0,0])
     .scale(1)
@@ -28,6 +28,7 @@ var svg = d3.select("#map-aquifer").append("svg")
 	.attr("height", mapHeight)
     .append("g");
 
+// group the svg layers
 var g = svg.append("g");
 
 svg.append("rect")
