@@ -31,11 +31,6 @@ var svg = d3.select("#map-aquifer").append("svg")
 // group the svg layers
 var g = svg.append("g");
 
-svg.append("rect")
-    .attr("class", "overlay")
-    .attr("width", mapWidth)
-    .attr("height", mapHeight);
-
 svg
     .call(zoom)
     .call(zoom.event);
