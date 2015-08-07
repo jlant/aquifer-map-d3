@@ -1,10 +1,13 @@
+// default values
+var mapType = 'btn-precip';
+
 // set width and height of svg element
-var width = 1000;
-var height = 700;
+var mapWidth = 1000;
+var mapHeight = 700;
 
 // create projection
 var projection = d3.geo.albersUsa()
-	.translate([width / 15, height / 2])
+	.translate([mapWidth / 15, mapHeight / 2])
 	.scale([3000]);
 
 // create zoom behavior
@@ -19,17 +22,18 @@ var path = d3.geo.path()
 	.projection(projection);
 
 // create an svg element to the body of the html
-var svg = d3.select("#map").append("svg")
-	.attr("width", width)
-	.attr("height", height)
+var svg = d3.select("#map-aquifer").append("svg")
+	.attr('id', 'map-aquifer-svg')
+	.attr("width", mapWidth)
+	.attr("height", mapHeight)
     .append("g");
 
 var g = svg.append("g");
 
 svg.append("rect")
     .attr("class", "overlay")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("width", mapWidth)
+    .attr("height", mapHeight);
 
 svg
     .call(zoom)
@@ -87,7 +91,7 @@ var ls_w = 20, ls_h = 20;
 
 legend.append("rect")
     .attr("x", 20)
-    .attr("y", function(d, i){ return height - (i*ls_h) - 2*ls_h;})
+    .attr("y", function(d, i){ return mapHeight - (i*ls_h) - 2*ls_h;})
     .attr("width", ls_w)
     .attr("height", ls_h)
     .style("fill", function(d, i) { return color(d); })
@@ -95,5 +99,5 @@ legend.append("rect")
 
 legend.append("text")
     .attr("x", 50)
-    .attr("y", function(d, i){ return height - (i*ls_h) - ls_h - 4;})
+    .attr("y", function(d, i){ return mapHeight - (i*ls_h) - ls_h - 4;})
     .text(function(d, i){ return legend_labels[i]; });
