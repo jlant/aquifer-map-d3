@@ -25,7 +25,7 @@ var svg = d3.select("#map").append("svg")
     .append("g");
 
 var g = svg.append("g");
-	
+
 svg.append("rect")
     .attr("class", "overlay")
     .attr("width", width)
