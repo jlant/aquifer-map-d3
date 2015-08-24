@@ -28,9 +28,6 @@ var svg = d3.select("#map-aquifer").append("svg")
 	.attr("height", mapHeight)
     .append("g");
 
-// group the svg layers
-var g = svg.append("g");
-
 svg
     .call(zoom)
     .call(zoom.event);
@@ -42,13 +39,13 @@ d3.json("data/PMAS_model_boundary_Geo.json", function(error, json) {
     console.log("hello#1");
 
 	// bind the data and create one path for each geojson feature
-	g.selectAll("path")
+	svg.selectAll("path")
 		.data(json.features)
 		.enter()
 		.append("path")
 		.attr("d", path);
 
-	g.selectAll("path")
+	svg.selectAll("path")
 		.data(json.features)
 		.on("mouseover", function(d) {
 			d3.select(this)
@@ -65,11 +62,10 @@ d3.json("data/PMAS_model_boundary_Geo.json", function(error, json) {
 });   // <-- End of map drawing
 
 function zoomed() {
-  g.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 }
 
 // Adding a legend
-
 var color_domain = [500, 1000, 1500, 2000, 2500, 3000];
 var ext_color_domain = [0, 500, 1000, 1500, 2000, 2500, 3000];
 var legend_labels = ["A", "B", "C", "D", "E", "F", "G"];
@@ -99,13 +95,16 @@ legend.append("text")
     .text(function(d, i){ return legend_labels[i]; });
 
 
-// adding click events to group buttons
+// adding click events to button group
 $("#btn-precip").on('click', function() {
 	$("#btn-et").removeClass('btn btn-primary');
 	$("#btn-et").addClass('btn btn-default');
 	$("#btn-recharge").removeClass('btn btn-primary');
 	$("#btn-recharge").addClass('btn btn-default');
 	$(this).addClass('btn btn-primary');
+	mapType = $(this).attr('id');
+	console.log(mapType);
+	paintPMAS();
 	//alert("Precip button clicked!");
 });
 
@@ -115,6 +114,9 @@ $("#btn-et").on('click', function() {
 	$("#btn-recharge").removeClass('btn btn-primary');
 	$("#btn-recharge").addClass('btn btn-default');
 	$(this).addClass('btn btn-primary');
+	mapType = $(this).attr('id');
+	console.log(mapType);
+	paintPMAS();
 	//alert("ET button clicked!");
 });
 
@@ -124,5 +126,27 @@ $("#btn-recharge").on('click', function() {
 	$("#btn-et").removeClass('btn btn-primary');
 	$("#btn-et").addClass('btn btn-default');
 	$(this).addClass('btn btn-primary');
+	mapType = $(this).attr('id');
+	console.log(mapType);
+	paintPMAS();
 	//alert("Recharge button clicked!");
 });
+
+
+// Set the color depending on the mapType (eventually load raster here too?)
+var paintPMAS = function(){
+	svg.selectAll("path")
+		.attr('fill', function(d){
+			var color = '#eee';
+			if( mapType == 'btn-precip'){
+				color = 'blue'
+			}
+			else if( mapType == 'btn-et'){
+				color = 'red'
+			}
+			else if( mapType == 'btn-recharge'){
+				color = 'green'
+			}
+			return color;
+		})
+}

@@ -26,7 +26,6 @@ svg {
 li.key {
     border-top-width: 15px;
     border-top-style: solid;
-/*    font-size: .75em;*/
     width: 10%;
     padding-left: 0;
     padding-right: 0;
@@ -34,7 +33,6 @@ li.key {
 
 .bar {
     fill: steelblue;
-    fill-opactiy: 0.9;
     stroke: none;
 }
 
