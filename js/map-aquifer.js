@@ -100,14 +100,29 @@ legend.append("text")
 
 
 // adding click events to group buttons
-$( "#btn-precip" ).click(function() {
-  alert( "precip button clicked!" );
+$("#btn-precip").on('click', function() {
+	$("#btn-et").removeClass('btn btn-primary');
+	$("#btn-et").addClass('btn btn-default');
+	$("#btn-recharge").removeClass('btn btn-primary');
+	$("#btn-recharge").addClass('btn btn-default');
+	$(this).addClass('btn btn-primary');
+	//alert("Precip button clicked!");
 });
 
-$( "#btn-et" ).click(function() {
-  alert( "et button clicked!" );
+$("#btn-et").on('click', function() {
+	$("#btn-precip").removeClass('btn btn-primary');
+	$("#btn-precip").addClass('btn btn-default');
+	$("#btn-recharge").removeClass('btn btn-primary');
+	$("#btn-recharge").addClass('btn btn-default');
+	$(this).addClass('btn btn-primary');
+	//alert("ET button clicked!");
 });
 
-$( "#btn-recharge" ).click(function() {
-  alert( "recharge button clicked!" );
+$("#btn-recharge").on('click', function() {
+	$("#btn-precip").removeClass('btn btn-primary');
+	$("#btn-precip").addClass('btn btn-default');
+	$("#btn-et").removeClass('btn btn-primary');
+	$("#btn-et").addClass('btn btn-default');
+	$(this).addClass('btn btn-primary');
+	//alert("Recharge button clicked!");
 });
