@@ -73,3 +73,35 @@ li.key {
 .checkbox-sort {
     font-size: 16px;
 }
+
+
+.btn {
+    width: 100px;
+}
+
+#popup-chart {
+	width: 300px;
+	border: 1px solid #ccc;
+	margin-top: 20px;
+	padding-top: 10px;
+	overflow: auto;
+}
+
+#slider-box {
+	background-color: #E0E0E0;
+	margin-top: 20px;
+	padding: 10px;
+}
+
+.slider{
+	margin-left: 30px;
+}
+
+#yearLabel {
+	margin-left: 30px;
+}
+
+#map-aquifer-container{
+	border: 1px solid #ccc;
+	margin-top: 20px;
+}

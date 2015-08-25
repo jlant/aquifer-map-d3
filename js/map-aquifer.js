@@ -5,6 +5,12 @@ var mapType = 'btn-precip';
 var mapWidth = 1000;
 var mapHeight = 700;
 
+// slider bar for map year
+$("#slider-year").slider();
+$("#slider-year").on("slide", function(slideEvt) {
+	$("#sliderValue").text(slideEvt.value);
+});
+
 // create projection
 var projection = d3.geo.albersUsa()
 	.translate([mapWidth / 15, mapHeight / 2])
@@ -37,6 +43,7 @@ d3.json("data/PMAS_model_boundary_Geo.json", function(error, json) {
 
 	if (error) { return console.error(error) };
     console.log("hello#1");
+	populateChart();
 
 	// bind the data and create one path for each geojson feature
 	svg.selectAll("path")
@@ -105,6 +112,7 @@ $("#btn-precip").on('click', function() {
 	mapType = $(this).attr('id');
 	console.log(mapType);
 	paintPMAS();
+	populateChart();
 	//alert("Precip button clicked!");
 });
 
@@ -117,6 +125,7 @@ $("#btn-et").on('click', function() {
 	mapType = $(this).attr('id');
 	console.log(mapType);
 	paintPMAS();
+	populateChart();
 	//alert("ET button clicked!");
 });
 
@@ -129,12 +138,13 @@ $("#btn-recharge").on('click', function() {
 	mapType = $(this).attr('id');
 	console.log(mapType);
 	paintPMAS();
+	populateChart();
 	//alert("Recharge button clicked!");
 });
 
 
 // Set the color depending on the mapType (eventually load raster here too?)
-var paintPMAS = function(){
+var paintPMAS = function() {
 	svg.selectAll("path")
 		.attr('fill', function(d){
 			var color = '#eee';
@@ -149,4 +159,21 @@ var paintPMAS = function(){
 			}
 			return color;
 		})
+}
+
+
+// Create chart
+var populateChart = function() {
+	var chartLabel = '';
+	if( mapType == 'btn-precip'){
+		chartLabel = 'Precipitation, in in/yr'
+	}
+	else if( mapType == 'btn-et'){
+		chartLabel = 'Evapotranspiration, in in/yr'
+	}
+	else if( mapType == 'btn-recharge'){
+		chartLabel = 'Recharge, in in/yr'
+	}
+	$('#chart-info .chart-type').text(chartLabel);
+	$('#chart-title').text('HUC8 ########');
 }
