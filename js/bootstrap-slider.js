@@ -9,6 +9,8 @@
  *			- Twitter: @Rovolutionary
  *			- Github:  rovolution
  *
+ * Bug fix by J. Boldt, 8/25/2015
+ *
  * =========================================================
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1179,7 +1181,7 @@
 				this._trigger('slideStart', newValue);
 
 				this._setDataVal(newValue);
-				this.setValue(newValue, false, true);
+				this.setValue(newValue, true, true);
 
 				this._pauseEvent(ev);
 
@@ -1302,6 +1304,7 @@
 					this._hideTooltip();
 				}
 				var val = this._calculateValue(true);
+				this.setValue(val, true, true);
 
 				this._layout();
 				this._setDataVal(val);

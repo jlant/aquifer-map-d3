@@ -1,14 +1,40 @@
 // default values
 var mapType = 'btn-precip';
+var sliderYear = '1980';
 
-// set width and height of svg element
+// set width and height of chart
+var chartWidth = 290;
+var chartHeight = 50;
+
+// set width and height of svg element (aquifer map)
 var mapWidth = 1000;
 var mapHeight = 700;
+
+// chart axes
+var x = d3.scale.linear()
+	.range([1980, 2011]);
+
+var y = d3.scale.linear()
+	.range([100, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+// var line = d3.svg.line()
+    // .x(function(d) { return x(d.year); })
+    // .y(function(d) { return y(d.value); });
 
 // slider bar for map year
 $("#slider-year").slider();
 $("#slider-year").on("slide", function(slideEvt) {
+	sliderYear = slideEvt.value;
 	$("#sliderValue").text(slideEvt.value);
+	$('#chart-header1 .chart-type').text('Year: ' + slideEvt.value);
 });
 
 // create projection
@@ -39,11 +65,14 @@ svg
     .call(zoom.event);
 
 // load the data file; note path is relative from index.html
-d3.json("data/PMAS_model_boundary_Geo.json", function(error, json) {
+d3.json("data/WBD_HUC8_PMAS_sa_Geo.json", function(error, json) {
+	//data/PMAS_model_boundary_Geo.json
+	//data/WBD_HUC8_PMAS_sa_Geo.json
 
 	if (error) { return console.error(error) };
     console.log("hello#1");
 	populateChart();
+	generateChart();
 
 	// bind the data and create one path for each geojson feature
 	svg.selectAll("path")
@@ -59,6 +88,7 @@ d3.json("data/PMAS_model_boundary_Geo.json", function(error, json) {
 				.transition().duration(10)
 				.attr("fill", "yellow")
 				.attr("stroke-width", 3);
+			d3.select("#chart-title").text("HUC8: " + d.properties.HUC_8)
 		})
 		.on("mouseout", function(d) {
 				d3.select(this)
@@ -162,7 +192,17 @@ var paintPMAS = function() {
 }
 
 
-// Create chart
+// Generate chart
+var generateChart = function() {
+	mapChart = d3.select("#map-aquifer-chart").append("svg")
+		.attr('id', 'map-aquifer-chart-svg')
+		.attr("width", chartWidth)
+		.attr("height", chartHeight)
+		.append("g");
+}
+
+
+// Populate chart
 var populateChart = function() {
 	var chartLabel = '';
 	if( mapType == 'btn-precip'){
@@ -174,6 +214,7 @@ var populateChart = function() {
 	else if( mapType == 'btn-recharge'){
 		chartLabel = 'Recharge, in in/yr'
 	}
-	$('#chart-info .chart-type').text(chartLabel);
-	$('#chart-title').text('HUC8 ########');
+	$('#chart-title').text('HUC8: ');
+	$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
+	$('#chart-header2 .chart-type').text(chartLabel);
 }
