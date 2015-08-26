@@ -37,6 +37,10 @@ $("#slider-year").on("slide", function(slideEvt) {
 	$('#chart-header1 .chart-type').text('Year: ' + slideEvt.value);
 });
 
+// create a quantize scale (function) to sort data values into buckets of color
+var color = d3.scale.quantize()
+	.range(colorbrewer.RdYlBu[9]);
+
 // create projection
 var projection = d3.geo.albersUsa()
 	.translate([mapWidth / 15, mapHeight / 2])
@@ -67,54 +71,99 @@ svg
     .call(zoom)
     .call(zoom.event);
 
-// load the data file; note path is relative from index.html
-d3.json("data/WBD_HUC8_PMAS_sa_Geo.json", function(error, json) {
-	//data/PMAS_model_boundary_Geo.json
-	//data/WBD_HUC8_PMAS_sa_Geo.json
+// load the precip data
+d3.csv("data/precip_1980-2011.csv", function(precip) {
+	
+	// set the input domain for the color scale
+	color.domain([
+		d3.min(precip, function(d) { return parseFloat(d.MEAN); }),
+		d3.max(precip, function(d) { return parseFloat(d.MEAN); })
+		]);
 
-	if (error) { return console.error(error) };
-    console.log("hello#1");
-	populateChart();
-	generateChart();
+	// load the data file; note path is relative from index.html
+	d3.json("data/WBD_HUC8_PMAS_sa_Geo.json", function(error, json) {
+		//data/PMAS_model_boundary_Geo.json
+		//data/WBD_HUC8_PMAS_sa_Geo.json
 
-	// bind the data and create one path for each geojson feature
-	container.selectAll("path")
-		.data(json.features)
-		.enter()
-		.append("path")
-		.attr("d", path);
+		if (error) { return console.error(error) };
+		console.log("hello#1");
+		populateChart();
+		generateChart();
 
-	container.selectAll("path")
-		.data(json.features)
-		.on("mouseover", function(d) {
-			d3.select(this)
-				.transition().duration(10)
-				.attr("fill", "yellow")
-				.attr("stroke-width", 3);
-			d3.select("#chart-title").text("HUC8: " + d.properties.HUC_8)
-		})
-		.on("mouseout", function(d) {
+		// merge the precip data and geojson
+		for (var i = 0; i < precip.length; i++) {
+
+			// get the HUC8 name
+			var precip_HUC8 = precip[i].HUC_8;
+
+			// get the precip value and convert from string to float
+			var precip_mean = parseFloat(precip[i].MEAN);
+
+			// find the corresponding HUC8 inside the geojson
+			for (var j = 0; j < json.features.length; j++) {
+
+				// get the json HUC8 name
+				var json_HUC8 = json.features[j].properties.HUC_8;
+
+				if (precip_HUC8 === json_HUC8) {
+
+					// copy the precip value into the json
+					json.features[j].properties.precip_mean = precip_mean;
+
+					// stop looking through the geojson
+					break;
+				}
+			}	
+		}
+
+		// bind the data and create one path for each geojson feature
+		container.selectAll("path")
+			.data(json.features)
+			.enter()
+			.append("path")
+			.attr("d", path)
+			.attr("fill", calculate_color);
+
+		container.selectAll("path")
+			.data(json.features)
+			.on("mouseover", function(d) {
 				d3.select(this)
 					.transition().duration(10)
-					.attr("fill", "white")
-					.attr("stroke-width", 1);
-		})
-});   // <-- End of map drawing
+					.attr("fill", "yellow")
+					.attr("stroke-width", 3);
+				d3.select("#chart-title").text("HUC8: " + d.properties.HUC_8)
+			})
+			.on("mouseout", function(d) {
+					d3.select(this)
+						.transition().duration(10)
+						.attr("fill", "white")
+						.attr("stroke-width", 1);
+			})
+	});   // <-- End of json map drawing
+});   // <-- End of csv
 
+// function for zoom
 function zoomed() {
   container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 }
 
+// function to calculate a color based on precip_mean
+function calculate_color(d) {
+	var value = d.properties.precip_mean;
+
+	if (value) {
+		return color(value);
+	}
+	else {
+		return "#808080"; // gray
+	}
+}
+
 // Adding a legend
-var color_domain = [500, 1000, 1500, 2000, 2500, 3000];
-var ext_color_domain = [0, 500, 1000, 1500, 2000, 2500, 3000];
-var legend_labels = ["A", "B", "C", "D", "E", "F", "G"];
-var color = d3.scale.threshold()
-    .domain(color_domain)
-    .range(["#bdc9be", "#97b0a0", "#5e8b73", "#4b7e64", "#256546", "#125937", "#004d28"]);
+var legend_labels = ["Dry", ".", ".", ".", ".", ".", ".", ".", "Wet"];
 
 var legend = svg.selectAll("g.legend")
-    .data(ext_color_domain)
+    .data(color.range())
     .enter()
 	.append("g")
     .attr("class", "legend");
@@ -126,8 +175,7 @@ legend.append("rect")
     .attr("y", function(d, i){ return mapHeight - (i*ls_h) - 2*ls_h;})
     .attr("width", ls_w)
     .attr("height", ls_h)
-    .style("fill", function(d, i) { return color(d); })
-    .style("opacity", 0.8);
+    .style("fill", function(d) { return d; });
 
 legend.append("text")
     .attr("x", 50)
