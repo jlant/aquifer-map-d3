@@ -60,6 +60,9 @@ var svg = d3.select("#map-aquifer").append("svg")
 	.attr("height", mapHeight)
     .append("g");
 
+// this is needed for pan performance
+var container = svg.append("g");
+	
 svg
     .call(zoom)
     .call(zoom.event);
@@ -75,13 +78,13 @@ d3.json("data/WBD_HUC8_PMAS_sa_Geo.json", function(error, json) {
 	generateChart();
 
 	// bind the data and create one path for each geojson feature
-	svg.selectAll("path")
+	container.selectAll("path")
 		.data(json.features)
 		.enter()
 		.append("path")
 		.attr("d", path);
 
-	svg.selectAll("path")
+	container.selectAll("path")
 		.data(json.features)
 		.on("mouseover", function(d) {
 			d3.select(this)
@@ -99,7 +102,7 @@ d3.json("data/WBD_HUC8_PMAS_sa_Geo.json", function(error, json) {
 });   // <-- End of map drawing
 
 function zoomed() {
-  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+  container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 }
 
 // Adding a legend
