@@ -81,7 +81,7 @@ d3.csv("data/precip_1980-2011.csv", function(precip) {
 		]);
 
 	// load the data file; note path is relative from index.html
-	d3.json("data/WBD_HUC8_PMAS_sa_Geo.json", function(error, json) {
+	d3.json("data/WBD_HUC8_PMAS_sa_Geo.json", function(error, json_huc8) {
 		//data/PMAS_model_boundary_Geo.json
 		//data/WBD_HUC8_PMAS_sa_Geo.json
 
@@ -100,15 +100,15 @@ d3.csv("data/precip_1980-2011.csv", function(precip) {
 			var precip_mean = parseFloat(precip[i].MEAN);
 
 			// find the corresponding HUC8 inside the geojson
-			for (var j = 0; j < json.features.length; j++) {
+			for (var j = 0; j < json_huc8.features.length; j++) {
 
 				// get the json HUC8 name
-				var json_HUC8 = json.features[j].properties.HUC_8;
+				var json_HUC8 = json_huc8.features[j].properties.HUC_8;
 
 				if (precip_HUC8 === json_HUC8) {
 
 					// copy the precip value into the json
-					json.features[j].properties.precip_mean = precip_mean;
+					json_huc8.features[j].properties.precip_mean = precip_mean;
 
 					// stop looking through the geojson
 					break;
@@ -118,14 +118,14 @@ d3.csv("data/precip_1980-2011.csv", function(precip) {
 
 		// bind the data and create one path for each geojson feature
 		container.selectAll("path")
-			.data(json.features)
+			.data(json_huc8.features)
 			.enter()
 			.append("path")
 			.attr("d", path)
 			.attr("fill", calculate_color);
 
 		container.selectAll("path")
-			.data(json.features)
+			.data(json_huc8.features)
 			.on("mouseover", function(d) {
 				d3.select(this)
 					.transition().duration(10)
@@ -139,7 +139,7 @@ d3.csv("data/precip_1980-2011.csv", function(precip) {
 						.attr("fill", "white")
 						.attr("stroke-width", 1);
 			})
-	});   // <-- End of json map drawing
+	});   // <-- End of json_huc8
 });   // <-- End of csv
 
 // function for zoom
