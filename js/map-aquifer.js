@@ -2,9 +2,13 @@
 var mapType = 'btn-precip';
 var sliderYear = '1980';
 
-// set width and height of chart
-var chartWidth = 290;
-var chartHeight = 50;
+// example data
+var data = [3, 6, 2, 7, 5, 2, 0, 3, 8, 9, 2, 5, 7, 5, 2, 4, 5, 1, 5, 10, 5, 1, 5, 5, 4, 5, 6, 1, 8, 9, 5, 6];
+
+// set width, height, and margin of chart
+var chartW = 290;
+var chartH = 180;
+var chartM = 20;
 
 // set width and height of svg element (aquifer map)
 var mapWidth = 1000;
@@ -12,10 +16,12 @@ var mapHeight = 700;
 
 // chart axes
 var x = d3.scale.linear()
-	.range([1980, 2011]);
+	.domain([0, data.length])
+	.range([0 + chartM, chartW - 2*chartM]);
 
 var y = d3.scale.linear()
-	.range([100, 0]);
+	.domain([0, 10])
+	.range([chartH - chartM, 0 + 2*chartM]);
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -24,6 +30,10 @@ var xAxis = d3.svg.axis()
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
+	
+var line = d3.svg.line()
+	.x(function(d,i) { return x(i); })
+	.y(function(d) { return y(d); });
 
 // var line = d3.svg.line()
     // .x(function(d) { return x(d.year); })
@@ -245,11 +255,33 @@ var paintPMAS = function() {
 
 // Generate chart
 var generateChart = function() {
-	mapChart = d3.select("#map-aquifer-chart").append("svg")
+	
+	var mapChart = d3.select("#map-aquifer-chart").append("svg")
 		.attr('id', 'map-aquifer-chart-svg')
-		.attr("width", chartWidth)
-		.attr("height", chartHeight)
-		.append("g");
+		.attr("width", chartW)
+		.attr("height", chartH)
+		.append("g")
+		.attr("transform", "translate(30,-20)");
+	
+	mapChart.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + (chartH-chartM) + ")")
+		.call(xAxis);
+
+	mapChart.append("g")
+		.attr("class", "y axis")
+		.attr("transform", "translate(" + chartM + ",0)")
+		.call(yAxis)
+		.append("text")
+		.attr("transform", "rotate(-90)")
+		.attr("y", 6)
+		.attr("dy", ".75em")
+		.style("text-anchor", "end")
+		.text("ylabel");
+
+	mapChart.append("path")
+		.attr("class", "chartLineA")
+		.attr("d", line(data));
 }
 
 
