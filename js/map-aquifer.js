@@ -194,7 +194,7 @@ legend.append("text")
 
 
 // adding click events to button group
-$("#btn-precip").on('click', function() {
+$("#btn-precip").click(function() {
 	$("#btn-et").removeClass('btn btn-primary');
 	$("#btn-et").addClass('btn btn-default');
 	$("#btn-recharge").removeClass('btn btn-primary');
@@ -207,7 +207,7 @@ $("#btn-precip").on('click', function() {
 	//alert("Precip button clicked!");
 });
 
-$("#btn-et").on('click', function() {
+$("#btn-et").click(function() {
 	$("#btn-precip").removeClass('btn btn-primary');
 	$("#btn-precip").addClass('btn btn-default');
 	$("#btn-recharge").removeClass('btn btn-primary');
@@ -220,7 +220,7 @@ $("#btn-et").on('click', function() {
 	//alert("ET button clicked!");
 });
 
-$("#btn-recharge").on('click', function() {
+$("#btn-recharge").click(function() {
 	$("#btn-precip").removeClass('btn btn-primary');
 	$("#btn-precip").addClass('btn btn-default');
 	$("#btn-et").removeClass('btn btn-primary');
