@@ -53,13 +53,47 @@ var map = (function(map, $, d3) {
 	var color = d3.scale.quantize()
 		.range(colorbrewer.RdYlBu[9]);
 	
-	// slider bar for map year
+	// EVENT: adding click events to button group
+	$("#btn-precip").click(function() {
+		$("#btn-et").removeClass('btn btn-primary');
+		$("#btn-et").addClass('btn btn-default');
+		$("#btn-recharge").removeClass('btn btn-primary');
+		$("#btn-recharge").addClass('btn btn-default');
+		$(this).addClass('btn btn-primary');
+		mapType = $(this).attr('id');
+		console.log(mapType);
+		loadData();
+	});
+
+	$("#btn-et").click(function() {
+		$("#btn-precip").removeClass('btn btn-primary');
+		$("#btn-precip").addClass('btn btn-default');
+		$("#btn-recharge").removeClass('btn btn-primary');
+		$("#btn-recharge").addClass('btn btn-default');
+		$(this).addClass('btn btn-primary');
+		mapType = $(this).attr('id');
+		console.log(mapType);
+		loadData();
+	});
+
+	$("#btn-recharge").click(function() {
+		$("#btn-precip").removeClass('btn btn-primary');
+		$("#btn-precip").addClass('btn btn-default');
+		$("#btn-et").removeClass('btn btn-primary');
+		$("#btn-et").addClass('btn btn-default');
+		$(this).addClass('btn btn-primary');
+		mapType = $(this).attr('id');
+		console.log(mapType);
+		loadData();
+	});
+	
+	// EVENT: slider bar for map year
 	$("#slider-year").slider();
 	$("#slider-year").on("slide", function(slideEvt) {
 		sliderYear = slideEvt.value;
 		$("#sliderValue").text(slideEvt.value);
 		$('#chart-header1 .chart-type').text('Year: ' + slideEvt.value);
-		paintPMAS();
+		loadData();
 	});
 	
 	// function for zoom
@@ -70,7 +104,6 @@ var map = (function(map, $, d3) {
 	// function to calculate a color based on modelVar_mean
 	function calculate_color(d) {
 		var value = d.properties.modelVar_mean;
-		console.log(value);
 
 		if (value) {
 			return color(value);
@@ -80,7 +113,7 @@ var map = (function(map, $, d3) {
 		}
 	}
 	
-	// test
+	// keep...might need this above if different color schemes for the three maps
 	function calcolor() {
 		var color = '#eee';
 		if( mapType == 'btn-precip'){
@@ -95,7 +128,7 @@ var map = (function(map, $, d3) {
 		return color;
 	}
 	
-	// main
+	// ****MAIN****
 	
 	map.preInit = function() {
 		console.log("at preInit");
@@ -153,46 +186,6 @@ var map = (function(map, $, d3) {
 		generateChart();
 		drawMap();
 		$('#map-aquifer').css('height', 'auto')
-		
-		// adding click events to button group
-		$("#btn-precip").click(function() {
-			$("#btn-et").removeClass('btn btn-primary');
-			$("#btn-et").addClass('btn btn-default');
-			$("#btn-recharge").removeClass('btn btn-primary');
-			$("#btn-recharge").addClass('btn btn-default');
-			$(this).addClass('btn btn-primary');
-			mapType = $(this).attr('id');
-			console.log(mapType);
-			paintPMAS();
-			// populateChart();
-			//alert("Precip button clicked!");
-		});
-
-		$("#btn-et").click(function() {
-			$("#btn-precip").removeClass('btn btn-primary');
-			$("#btn-precip").addClass('btn btn-default');
-			$("#btn-recharge").removeClass('btn btn-primary');
-			$("#btn-recharge").addClass('btn btn-default');
-			$(this).addClass('btn btn-primary');
-			mapType = $(this).attr('id');
-			console.log(mapType);
-			paintPMAS();
-			// populateChart();
-			//alert("ET button clicked!");
-		});
-
-		$("#btn-recharge").click(function() {
-			$("#btn-precip").removeClass('btn btn-primary');
-			$("#btn-precip").addClass('btn btn-default');
-			$("#btn-et").removeClass('btn btn-primary');
-			$("#btn-et").addClass('btn btn-default');
-			$(this).addClass('btn btn-primary');
-			mapType = $(this).attr('id');
-			console.log(mapType);
-			paintPMAS();
-			// populateChart();
-			//alert("Recharge button clicked!");
-		});
 	}
 	
 	var setResizer = function() {
@@ -274,6 +267,7 @@ var map = (function(map, $, d3) {
 		$('#chart-header2 .chart-type').text(chartLabel);
 	}
 	
+	// Draw background layers here?
 	var drawMap = function() {
 		// create projection
 		var mapProjection = d3.geo.albersUsa()
@@ -284,11 +278,11 @@ var map = (function(map, $, d3) {
 		path = d3.geo.path()
 			.projection(mapProjection);
 		
-		paintPMAS();
+		loadData();
 	}
-	
-	// Set the color of each HUC-8 depending on the mapType (dataName) and sliderYear
-	var paintPMAS = function() {
+
+	// load the SWB model data
+	function loadData() {
 		
 		// Construct fileName for .csv data file
 		var dataName = '';
@@ -305,14 +299,6 @@ var map = (function(map, $, d3) {
 		csvFileName = (dataName + '_' + sliderYear + '.csv');
 		console.log(csvFileName);
 		
-		// svg.selectAll("path")
-			// .attr('fill', calcolor);
-		
-		loadData();
-	}
-
-	// load the SWB model data
-	function loadData() {
 		var url = ('data/' + csvFileName);
 		console.log(url);
 		
@@ -326,8 +312,8 @@ var map = (function(map, $, d3) {
 
 			// load the data file; note path is relative from index.html
 			d3.json("data/WBD_HUC8_PMAS_sa_Geo.json", function(error, json_huc8) {
-				//data/PMAS_model_boundary_Geo.json
-				//data/WBD_HUC8_PMAS_sa_Geo.json
+				// data/PMAS_model_boundary_Geo.json
+				// data/WBD_HUC8_PMAS_sa_Geo.json
 
 				if (error) { return console.error(error) };
 				console.log("hello#1");
@@ -388,8 +374,15 @@ var map = (function(map, $, d3) {
 			});   // <-- End of json_huc8
 		});   // <-- End of csv
 		
+		colorMap();
 		addLegend();
 		console.log("hello#3");
+	}
+	
+	// Set the color of each HUC-8 depending on the mapType (dataName) and sliderYear
+	var colorMap = function() {
+		container.selectAll("path")
+			.attr("fill", calculate_color);
 	}
 	
 	// Adding a legend
