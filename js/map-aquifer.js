@@ -4,7 +4,7 @@ var map = (function(map, $, d3) {
 	// default values
 	var mapType = 'btn-precip';
 	var sliderYear = '1980';
-	var csvFileName = 'precip_1980.csv';
+	var csvFileName = undefined;
 	var svg = undefined;
 	var container = undefined;
 	var path = undefined;
@@ -39,7 +39,8 @@ var map = (function(map, $, d3) {
 	var yAxis = d3.svg.axis()
 		.scale(y)
 		.orient("left");
-		
+	
+	// chart line
 	var line = d3.svg.line()
 		.x(function(d,i) { return x(i); })
 		.y(function(d) { return y(d); });
@@ -66,9 +67,10 @@ var map = (function(map, $, d3) {
 		container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 	}
 
-	// function to calculate a color based on precip_mean
+	// function to calculate a color based on modelVar_mean
 	function calculate_color(d) {
-		var value = d.properties.precip_mean;
+		var value = d.properties.modelVar_mean;
+		console.log(value);
 
 		if (value) {
 			return color(value);
@@ -78,6 +80,22 @@ var map = (function(map, $, d3) {
 		}
 	}
 	
+	// test
+	function calcolor() {
+		var color = '#eee';
+		if( mapType == 'btn-precip'){
+			color = 'blue'
+		}
+		else if( mapType == 'btn-et'){
+			color = 'red'
+		}
+		else if( mapType == 'btn-recharge'){
+			color = 'green'
+		}
+		return color;
+	}
+	
+	// main
 	
 	map.preInit = function() {
 		console.log("at preInit");
@@ -146,7 +164,7 @@ var map = (function(map, $, d3) {
 			mapType = $(this).attr('id');
 			console.log(mapType);
 			paintPMAS();
-			populateChart();
+			// populateChart();
 			//alert("Precip button clicked!");
 		});
 
@@ -159,7 +177,7 @@ var map = (function(map, $, d3) {
 			mapType = $(this).attr('id');
 			console.log(mapType);
 			paintPMAS();
-			populateChart();
+			// populateChart();
 			//alert("ET button clicked!");
 		});
 
@@ -172,7 +190,7 @@ var map = (function(map, $, d3) {
 			mapType = $(this).attr('id');
 			console.log(mapType);
 			paintPMAS();
-			populateChart();
+			// populateChart();
 			//alert("Recharge button clicked!");
 		});
 	}
@@ -287,35 +305,23 @@ var map = (function(map, $, d3) {
 		csvFileName = (dataName + '_' + sliderYear + '.csv');
 		console.log(csvFileName);
 		
-		svg.selectAll("path")
-			.attr('fill', function() {
-				var color = '#eee';
-				if( mapType == 'btn-precip'){
-					color = 'blue'
-				}
-				else if( mapType == 'btn-et'){
-					color = 'red'
-				}
-				else if( mapType == 'btn-recharge'){
-					color = 'green'
-				}
-				return color;
-			})
+		// svg.selectAll("path")
+			// .attr('fill', calcolor);
 		
 		loadData();
 	}
 
 	// load the SWB model data
 	function loadData() {
-		var url = ('"data/' + csvFileName + '"');
+		var url = ('data/' + csvFileName);
 		console.log(url);
 		
-		d3.csv("data/et_1980.csv", function(precip) {
+		d3.csv(url, function(modelVar) {
 			
 			// set the input domain for the color scale
 			color.domain([
-				d3.min(precip, function(d) { return parseFloat(d.MEAN); }),
-				d3.max(precip, function(d) { return parseFloat(d.MEAN); })
+				d3.min(modelVar, function(d) { return parseFloat(d.MEAN); }),
+				d3.max(modelVar, function(d) { return parseFloat(d.MEAN); })
 				]);
 
 			// load the data file; note path is relative from index.html
@@ -327,25 +333,25 @@ var map = (function(map, $, d3) {
 				console.log("hello#1");
 				populateChart();
 
-				// merge the precip data and geojson
-				for (var i = 0; i < precip.length; i++) {
+				// merge the modelVar data and geojson
+				for (var i = 0; i < modelVar.length; i++) {
 
 					// get the HUC8 name
-					var precip_HUC8 = precip[i].HUC_8;
+					var modelVar_HUC8 = modelVar[i].HUC_8;
 
-					// get the precip value and convert from string to float
-					var precip_mean = parseFloat(precip[i].MEAN);
+					// get the modelVar value and convert from string to float
+					var modelVar_mean = parseFloat(modelVar[i].MEAN);
 
 					// find the corresponding HUC8 inside the geojson
 					for (var j = 0; j < json_huc8.features.length; j++) {
 
 						// get the json HUC8 name
-						var json_HUC8 = json_huc8.features[j].properties.HUC_8;
+						var json_HUC_8 = json_huc8.features[j].properties.HUC_8;
 
-						if (precip_HUC8 === json_HUC8) {
+						if (modelVar_HUC8 === json_HUC_8) {
 
-							// copy the precip value into the json
-							json_huc8.features[j].properties.precip_mean = precip_mean;
+							// copy the modelVar value into the json
+							json_huc8.features[j].properties.modelVar_mean = modelVar_mean;
 
 							// stop looking through the geojson
 							break;
@@ -354,6 +360,7 @@ var map = (function(map, $, d3) {
 				}
 				
 				console.log("hello#2");
+				console.log(json_huc8);
 				
 				// bind the data and create one path for each geojson feature
 				container.selectAll("path")
@@ -380,32 +387,36 @@ var map = (function(map, $, d3) {
 					})
 			});   // <-- End of json_huc8
 		});   // <-- End of csv
+		
+		addLegend();
+		console.log("hello#3");
+	}
+	
+	// Adding a legend
+	var addLegend = function() {
+		var legend_labels = ["Dry", ".", ".", ".", ".", ".", ".", ".", "Wet"];
+
+		var legend = svg.selectAll("g.legend")
+			.data(color.range())
+			.enter()
+			.append("g")
+			.attr("class", "legend");
+
+		var ls_w = 20, ls_h = 20;
+
+		legend.append("rect")
+			.attr("x", 20)
+			.attr("y", function(d, i){ return mapHeight - (i*ls_h) - 2*ls_h;})
+			.attr("width", ls_w)
+			.attr("height", ls_h)
+			.style("fill", function(d) { return d; });
+
+		legend.append("text")
+			.attr("x", 50)
+			.attr("y", function(d, i){ return mapHeight - (i*ls_h) - ls_h - 4;})
+			.text(function(d, i){ return legend_labels[i]; });
 	}
 
-	// Adding a legend
-	// var legend_labels = ["Dry", ".", ".", ".", ".", ".", ".", ".", "Wet"];
-
-	// var legend = svg.selectAll("g.legend")
-		// .data(color.range())
-		// .enter()
-		// .append("g")
-		// .attr("class", "legend");
-
-	// var ls_w = 20, ls_h = 20;
-
-	// legend.append("rect")
-		// .attr("x", 20)
-		// .attr("y", function(d, i){ return mapHeight - (i*ls_h) - 2*ls_h;})
-		// .attr("width", ls_w)
-		// .attr("height", ls_h)
-		// .style("fill", function(d) { return d; });
-
-	// legend.append("text")
-		// .attr("x", 50)
-		// .attr("y", function(d, i){ return mapHeight - (i*ls_h) - ls_h - 4;})
-		// .text(function(d, i){ return legend_labels[i]; });
-
-	
 	// End stuff
 	console.log("hello#0a");
 	return map;
