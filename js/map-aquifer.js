@@ -162,14 +162,12 @@ var map = (function(map, $, d3) {
 		// this is needed for pan performance
 		container = svg.append("g");
 		
-		console.log("at initMap middleA");
 		// create zoom and pan functionality
 		var zoom = d3.behavior.zoom()
 			.translate([0,0])
 			.scale(1)
 			.scaleExtent([1,10])
 			.on("zoom", zoomed);
-		console.log("at initMap middleB");
 		
 		svg
 			.call(zoom)
@@ -221,6 +219,7 @@ var map = (function(map, $, d3) {
 	
 	// Generate chart
 	var generateChart = function() {
+		console.log("at generateChart");
 		
 		var mapChart = d3.select("#map-aquifer-chart").append("svg")
 			.attr('id', 'map-aquifer-chart-svg')
@@ -282,7 +281,8 @@ var map = (function(map, $, d3) {
 	}
 
 	// load the SWB model data
-	function loadData() {
+	var loadData = function() {
+		console.log("at loadData");
 		
 		// Construct fileName for .csv data file
 		var dataName = '';
@@ -353,8 +353,7 @@ var map = (function(map, $, d3) {
 					.data(json_huc8.features)
 					.enter()
 					.append("path")
-					.attr("d", path)
-					.attr("fill", calculate_color);
+					.attr("d", path);
 
 				container.selectAll("path")
 					.data(json_huc8.features)
@@ -371,22 +370,28 @@ var map = (function(map, $, d3) {
 								.attr("fill", "white")
 								.attr("stroke-width", 1);
 					})
+				
+				console.log("hello#3");
+				colorMap();
+				addLegend();
+				console.log("hello#4");
+				
 			});   // <-- End of json_huc8
 		});   // <-- End of csv
-		
-		colorMap();
-		addLegend();
-		console.log("hello#3");
 	}
 	
 	// Set the color of each HUC-8 depending on the mapType (dataName) and sliderYear
 	var colorMap = function() {
+		console.log("at colorMap");
+		
 		container.selectAll("path")
 			.attr("fill", calculate_color);
 	}
 	
 	// Adding a legend
 	var addLegend = function() {
+		console.log("at addLegend");
+		
 		var legend_labels = ["Dry", ".", ".", ".", ".", ".", ".", ".", "Wet"];
 
 		var legend = svg.selectAll("g.legend")
