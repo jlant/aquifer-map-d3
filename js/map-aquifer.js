@@ -10,10 +10,10 @@ var map = (function(map, $, d3) {
 	var path = undefined;
 
 	// example data
-	var data = [3, 6, 2, 7, 5, 2, 0, 3, 8, 9, 2, 5, 7, 5, 2, 4, 5, 1, 5, 10, 5, 1, 5, 5, 4, 5, 6, 1, 8, 9, 5, 6];
+	var dataNum = [3, 6, 2, 7, 5, 2, 0, 3, 8, 9, 2, 5, 7, 5, 2, 4, 5, 1, 5, 10, 5, 1, 5, 5, 4, 5, 6, 1, 8, 9, 5, 6];
 
 	// set width, height, and margin of chart
-	var chartW = 290;
+	var chartW = 390;
 	var chartH = 180;
 	var chartM = 20;
 
@@ -25,7 +25,7 @@ var map = (function(map, $, d3) {
 
 	// chart axes
 	var x = d3.scale.linear()
-		.domain([0, data.length])
+		.domain([0, dataNum.length])
 		.range([0 + chartM, chartW - 2*chartM]);
 
 	var y = d3.scale.linear()
@@ -246,7 +246,7 @@ var map = (function(map, $, d3) {
 
 		mapChart.append("path")
 			.attr("class", "chartLineA")
-			.attr("d", line(data));
+			.attr("d", line(dataNum));
 	}
 	
 	// Populate chart

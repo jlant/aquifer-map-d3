@@ -4,7 +4,7 @@ svg {
 }
 
 .btn {
-    width: 100px;
+    width: 110px;
 }
 
 .tooltip {
@@ -12,7 +12,7 @@ svg {
 }
 
 #popup-chart {
-	width: 300px;
+	width: 400px;
 	border: 1px solid #ccc;
 	margin-top: 20px;
 	padding-top: 10px;
