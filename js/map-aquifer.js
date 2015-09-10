@@ -18,7 +18,7 @@ var map = (function(map, $, d3) {
 	var chartM = 20;
 
 	// set width and height of svg element (aquifer map)
-	var mapWidth = 1000;
+	var mapWidth = 1100;
 	var mapHeight = 700;
 	var mapOrigWidth = undefined;
 	var multiplier = 1;
@@ -314,11 +314,26 @@ var map = (function(map, $, d3) {
 				d3.min(modelVar, function(d) { return parseFloat(d.MEAN); }),
 				d3.max(modelVar, function(d) { return parseFloat(d.MEAN); })
 				]);
+			
+			// load the data file; note path is relative from index.html
+			d3.json("data/conus.json", function(error, json_conus) {
+
+				if (error) { return console.error(error) };
+				
+				// container.append("path")
+					// .data(json_conus.features)
+					// .attr("class", "conusStates")
+					// .attr("d", path);
+				container.selectAll(".conus-states")
+					.data(json_conus.features)
+					.enter()
+					.append("path")
+					.attr("class", "conus-states")
+					.attr("d", path)
+			});
 
 			// load the data file; note path is relative from index.html
 			d3.json("data/WBD_HUC8_PMAS_sa_Geo.json", function(error, json_huc8) {
-				// data/PMAS_model_boundary_Geo.json
-				// data/WBD_HUC8_PMAS_sa_Geo.json
 
 				if (error) { return console.error(error) };
 				console.log("hello#1");
@@ -358,13 +373,14 @@ var map = (function(map, $, d3) {
 				console.log(json_huc8);
 				
 				// bind the data and create one path for each geojson feature
-				container.selectAll("path")
+				container.selectAll(".huc8s")
 					.data(json_huc8.features)
 					.enter()
 					.append("path")
+					.attr("class", "huc8s")
 					.attr("d", path);
 
-				container.selectAll("path")
+				container.selectAll(".huc8s")
 					.data(json_huc8.features)
 					.on("mouseover", function(d) {
 						d3.select(this)
@@ -402,7 +418,7 @@ var map = (function(map, $, d3) {
 	var colorMap = function() {
 		console.log("at colorMap");
 		
-		container.selectAll("path")
+		container.selectAll(".huc8s")
 			.attr("fill", calculate_color);
 	}
 	

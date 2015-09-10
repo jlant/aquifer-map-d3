@@ -62,3 +62,9 @@ svg {
 	border: 1px solid #ccc;
 	margin-top: 20px;
 }
+
+.conus-states{
+	fill: #fff;
+	stroke: #ccc;
+	stroke-width: 2px;
+}
