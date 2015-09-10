@@ -4,10 +4,11 @@ var map = (function(map, $, d3) {
 	// default values
 	var mapType = 'btn-precip';
 	var sliderYear = '1980';
-	var csvFileName = undefined;
 	var svg = undefined;
 	var container = undefined;
 	var path = undefined;
+	var csvFileName = undefined;
+	var url = undefined;
 
 	// example data
 	var dataNum = [3, 6, 2, 7, 5, 2, 0, 3, 8, 9, 2, 5, 7, 5, 2, 4, 5, 1, 5, 10, 5, 1, 5, 5, 4, 5, 6, 1, 8, 9, 5, 6];
@@ -67,7 +68,7 @@ var map = (function(map, $, d3) {
 		$(this).addClass('btn btn-primary');
 		mapType = $(this).attr('id');
 		console.log(mapType);
-		loadData();
+		whichData();
 	});
 
 	$("#btn-et").click(function() {
@@ -78,7 +79,7 @@ var map = (function(map, $, d3) {
 		$(this).addClass('btn btn-primary');
 		mapType = $(this).attr('id');
 		console.log(mapType);
-		loadData();
+		whichData();
 	});
 
 	$("#btn-recharge").click(function() {
@@ -89,7 +90,7 @@ var map = (function(map, $, d3) {
 		$(this).addClass('btn btn-primary');
 		mapType = $(this).attr('id');
 		console.log(mapType);
-		loadData();
+		whichData();
 	});
 	
 	// EVENT: slider bar for map year
@@ -98,7 +99,7 @@ var map = (function(map, $, d3) {
 		sliderYear = slideEvt.value;
 		$("#sliderValue").text(slideEvt.value);
 		$('#chart-header1 .chart-type').text('Year: ' + slideEvt.value);
-		loadData();
+		whichData();
 	});
 	
 	// function for zoom
@@ -187,7 +188,7 @@ var map = (function(map, $, d3) {
 		
 		setResizer();
 		generateChart();
-		drawMap();
+		whichData();
 		$('#map-aquifer').css('height', 'auto')
 	}
 	
@@ -271,23 +272,9 @@ var map = (function(map, $, d3) {
 		$('#chart-header2 .chart-type').text(chartLabel);
 	}
 	
-	// Draw background layers here?
-	var drawMap = function() {
-		// create projection
-		var mapProjection = d3.geo.albersUsa()
-			.translate([mapWidth / 15, mapHeight / 2])
-			.scale([3000]);
-
-		// create path generator; converts geojson to svg path's ("M 100 100 L 300 100 L 200 300 z")
-		path = d3.geo.path()
-			.projection(mapProjection);
-		
-		loadData();
-	}
-
-	// load the SWB model data
-	var loadData = function() {
-		console.log("at loadData");
+	// Determine which data to load
+	var whichData = function() {
+		console.log("at whichData");
 		
 		// Construct fileName for .csv data file
 		var dataName = '';
@@ -304,8 +291,24 @@ var map = (function(map, $, d3) {
 		csvFileName = (dataName + '_' + sliderYear + '.csv');
 		console.log(csvFileName);
 		
-		var url = ('data/' + csvFileName);
+		// path to the SWB model data
+		url = ('data/' + csvFileName);
 		console.log(url);
+		
+		drawMap();
+	}
+
+	var drawMap = function() {
+		console.log("at drawMap");
+		
+		// create projection
+		var mapProjection = d3.geo.albersUsa()
+			.translate([mapWidth / 15, mapHeight / 2])
+			.scale([3000]);
+
+		// create path generator; converts geojson to svg path's ("M 100 100 L 300 100 L 200 300 z")
+		path = d3.geo.path()
+			.projection(mapProjection);
 		
 		d3.csv(url, function(modelVar) {
 			
