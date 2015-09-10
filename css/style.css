@@ -11,6 +11,18 @@ svg {
 	visibility: hidden;
 }
 
+.tooltip_HUC8 {
+	position: absolute;
+	background: black;
+	padding: 4px;
+	font: 12px sans-serif;
+	color: white;
+	opacity: 0.9;
+	border: 0px;
+	border-radius: 4px;
+	visibility: hidden;
+}
+
 #popup-chart {
 	width: 400px;
 	border: 1px solid #ccc;

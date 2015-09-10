@@ -53,6 +53,11 @@ var map = (function(map, $, d3) {
 	var color = d3.scale.quantize()
 		.range(colorbrewer.RdYlBu[9]);
 	
+	// add a tooltip
+	var tooltip_HUC8 = d3.select("body")
+		.append("div")
+		.attr("class", "tooltip_HUC8");
+	
 	// EVENT: adding click events to button group
 	$("#btn-precip").click(function() {
 		$("#btn-et").removeClass('btn btn-primary');
@@ -325,8 +330,10 @@ var map = (function(map, $, d3) {
 					// get the HUC8 name
 					var modelVar_HUC8 = modelVar[i].HUC_8;
 
-					// get the modelVar value and convert from string to float
+					// get the modelVar values (mean, min, max) and convert from string to float
 					var modelVar_mean = parseFloat(modelVar[i].MEAN);
+					var modelVar_min = parseFloat(modelVar[i].MIN);
+					var modelVar_max = parseFloat(modelVar[i].MAX);
 
 					// find the corresponding HUC8 inside the geojson
 					for (var j = 0; j < json_huc8.features.length; j++) {
@@ -336,8 +343,10 @@ var map = (function(map, $, d3) {
 
 						if (modelVar_HUC8 === json_HUC_8) {
 
-							// copy the modelVar value into the json
+							// copy the modelVar values into the json
 							json_huc8.features[j].properties.modelVar_mean = modelVar_mean;
+							json_huc8.features[j].properties.modelVar_min = modelVar_min;
+							json_huc8.features[j].properties.modelVar_max = modelVar_max;
 
 							// stop looking through the geojson
 							break;
@@ -360,15 +369,24 @@ var map = (function(map, $, d3) {
 					.on("mouseover", function(d) {
 						d3.select(this)
 							.transition().duration(10)
-							.attr("fill", "yellow")
 							.attr("stroke-width", 3);
-						d3.select("#chart-title").text("HUC8: " + d.properties.HUC_8)
+						d3.select("#chart-title").text("HUC8: " + d.properties.HUC_8);
 					})
 					.on("mouseout", function(d) {
 							d3.select(this)
 								.transition().duration(10)
-								.attr("fill", "white")
-								.attr("stroke-width", 1);
+								.attr("stroke-width", 1)
+							return tooltip_HUC8.style("visibility", "hidden");
+					})
+					.on("click", function(d) {
+						return tooltip_HUC8.style("visibility", "visible")
+							.style("top", (d3.event.pageY + 10) + "px")
+							.style("left", (d3.event.pageX + 10) + "px")
+							.html("HUC8: " + d.properties.HUC_8 + "<br>" + "Max: " + d.properties.modelVar_max.toPrecision(3) + " in/yr" + "<br>" + "Mean: " + d.properties.modelVar_mean.toPrecision(3) + " in/yr" + "<br>" + "Min: " + d.properties.modelVar_min.toPrecision(3) + " in/yr");
+					})
+					.on("mousemove", function() {
+						return tooltip_HUC8.style("top", (d3.event.pageY + 10) + "px")
+							.style("left", (d3.event.pageX + 10) + "px");
 					})
 				
 				console.log("hello#3");
