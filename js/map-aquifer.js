@@ -28,13 +28,17 @@ var map = (function(map, $, d3) {
 	var mapOrigWidth = undefined;
 	var multiplier = 1;
 	
+	// map axes
+	var x_map = d3.scale.linear();
+	var y_map = d3.scale.linear();
+	
 	// chart axes
 	var x = d3.scale.linear()
-		.domain([0, dataNum.length])
+		// .domain([0, dataNum.length])
 		.range([0 + chartM, chartW - 2*chartM]);
 
 	var y = d3.scale.linear()
-		.domain([0, 10])
+		// .domain([0, 10])
 		.range([chartH - chartM, 0 + 2*chartM]);
 
 	var xAxis = d3.svg.axis()
@@ -46,13 +50,9 @@ var map = (function(map, $, d3) {
 		.orient("left");
 	
 	// chart line
-	var line = d3.svg.line()
-		.x(function(d,i) { return x(i); })
-		.y(function(d) { return y(d); });
-
 	// var line = d3.svg.line()
-		// .x(function(d) { return x(d.year); })
-		// .y(function(d) { return y(d.value); });
+		// .x(function(d,i) { return x(i); })
+		// .y(function(d) { return y(d); });
 	
 	// create a quantize scale (function) to sort data values into buckets of color
 	var color = d3.scale.quantize()
@@ -119,10 +119,10 @@ var map = (function(map, $, d3) {
 	// function for zoom reset
 	function resetZoom() {
 		d3.transition().duration(10).tween("zoom", function() {
-			var ix = d3.interpolate(x.domain(), [-mapWidth / 2, mapWidth / 2]);
-			var iy = d3.interpolate(y.domain(), [-mapHeight / 2, mapHeight / 2]);
+			var ix = d3.interpolate(x_map.domain(), [-mapWidth / 2, mapWidth / 2]);
+			var iy = d3.interpolate(y_map.domain(), [-mapHeight / 2, mapHeight / 2]);
 			return function(t) {
-				zoom.x(x.domain(ix(t))).y(y.domain(iy(t)));
+				zoom.x(x_map.domain(ix(t))).y(y_map.domain(iy(t)));
 				svg.call(zoom.event);
 			};
 		});
@@ -248,6 +248,10 @@ var map = (function(map, $, d3) {
 	var generateChart = function() {
 		console.log("at generateChart");
 		
+		$('#chart-title').text('HUC8: ');
+		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
+		$('#chart-header2 .chart-type').text('Precipitation, in in/yr');
+		
 		mapChart = d3.select("#map-aquifer-chart").append("svg")
 			.attr('id', 'map-aquifer-chart-svg')
 			.attr("width", chartW)
@@ -256,12 +260,12 @@ var map = (function(map, $, d3) {
 			.attr("transform", "translate(30,-20)");
 		
 		mapChart.append("g")
-			.attr("class", "x axis")
+			.attr("class", "x-axis")
 			.attr("transform", "translate(0," + (chartH-chartM) + ")")
 			.call(xAxis);
 
 		mapChart.append("g")
-			.attr("class", "y axis")
+			.attr("class", "y-axis")
 			.attr("transform", "translate(" + chartM + ",0)")
 			.call(yAxis)
 			.append("text")
@@ -270,10 +274,13 @@ var map = (function(map, $, d3) {
 			.attr("dy", ".75em")
 			.style("text-anchor", "end")
 			.text("ylabel");
+		
+		mapChart.append("path")
+			.attr("class", "chartLineA");
 	}
 	
 	// Populate chart
-	var populateChart = function() {
+	var populateChart = function(data_year, data_inyr) {
 		var chartLabel = '';
 		if( mapType == 'btn-precip'){
 			chartLabel = 'Precipitation, in in/yr'
@@ -288,9 +295,33 @@ var map = (function(map, $, d3) {
 		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
 		$('#chart-header2 .chart-type').text(chartLabel);
 		
-		mapChart.append("path")
-			.attr("class", "chartLineA")
-			.attr("d", line(dataNum));
+		console.log(data_year);
+		console.log(data_inyr);
+		
+		x.domain([0, data_inyr.length]);
+		// x.domain(d3.extent(data_year));
+		y.domain(d3.extent(data_inyr));
+		
+		mapChart.select(".x-axis")
+			.call(xAxis);
+		
+		mapChart.select(".y-axis")
+			.call(yAxis);
+		
+		var lineData = data_inyr;
+		
+		// var line = d3.svg.line()
+			// .x(function(d) { return x(d.data_year); })
+			// .y(function(d) { return y(d.data_inyr); });
+		
+		var drawLine = d3.svg.line()
+			.x(function(d,i) { return x(i); })
+			.y(function(d) { return y(d); });
+		
+		console.log(drawLine);
+		
+		mapChart.select(".chartLineA")
+			.attr("d", drawLine(lineData));
 	}
 	
 	// Determine which data to load
@@ -394,21 +425,21 @@ var map = (function(map, $, d3) {
 			var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === '02050204';});
 			console.log(hts);
 			
-			var keys = [];
-			var values = [];
+			var data_year = [];
+			var data_inyr = [];
 			for(var k in hts[0]) {
-				keys.push(+k);
-				values.push(+hts[0][k]);
+				data_year.push(+k);
+				data_inyr.push(+hts[0][k]);
 			}
 			
 			// remove the first item of an array
-			keys.shift();
-			values.shift();
+			data_year.shift();
+			data_inyr.shift();
 			
-			console.log(keys);
-			console.log(values);
-			console.log(d3.extent(keys));
-			console.log(d3.extent(values));
+			console.log(data_year);
+			console.log(data_inyr);
+			console.log(d3.extent(data_year));
+			console.log(d3.extent(data_inyr));
 			console.log("hello#2");
 			console.log(json_huc8);
 			
@@ -446,11 +477,11 @@ var map = (function(map, $, d3) {
 				})
 			
 			console.log("hello#3");
-			populateChart();
+			populateChart(data_year, data_inyr);
 			colorMap();
 			addLegend();
 			console.log("hello#4");
-		}	
+		}
 	}
 	
 	// Set the color of each HUC-8 depending on the mapType (dataName) and sliderYear
