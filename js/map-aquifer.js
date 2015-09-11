@@ -4,6 +4,7 @@ var map = (function(map, $, d3) {
 	// default values
 	var mapType = 'btn-precip';
 	var sliderYear = '1980';
+	var zoom = undefined;
 	var svg = undefined;
 	var container = undefined;
 	var path = undefined;
@@ -102,9 +103,28 @@ var map = (function(map, $, d3) {
 		whichData();
 	});
 	
+	// EVENT: click event to reset zoom button
+	$("#button-reset").click(function() {
+		resetZoom();
+	});
+	
 	// function for zoom
 	function zoomed() {
 		container.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+	}
+	
+	// function for zoom reset
+	function resetZoom() {
+		d3.transition().duration(10).tween("zoom", function() {
+			var ix = d3.interpolate(x.domain(), [-mapWidth / 2, mapWidth / 2]);
+			var iy = d3.interpolate(y.domain(), [-mapHeight / 2, mapHeight / 2]);
+			return function(t) {
+				zoom.x(x.domain(ix(t))).y(y.domain(iy(t)));
+				svg.select(".x.axis").call(xAxis);
+				svg.select(".y.axis").call(yAxis);
+				svg.call(zoom.event);
+			};
+		});
 	}
 
 	// function to calculate a color based on modelVar_mean
@@ -169,7 +189,9 @@ var map = (function(map, $, d3) {
 		container = svg.append("g");
 		
 		// create zoom and pan functionality
-		var zoom = d3.behavior.zoom()
+		zoom = d3.behavior.zoom()
+			.x(x)
+			.y(y)
 			.translate([0,0])
 			.scale(1)
 			.scaleExtent([1,10])

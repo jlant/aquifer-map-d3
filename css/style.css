@@ -58,6 +58,10 @@ svg {
 	margin-left: 30px;
 }
 
+#button-reset {
+	float: right;
+}
+
 #map-aquifer-container{
 	border: 1px solid #ccc;
 	margin-top: 20px;
