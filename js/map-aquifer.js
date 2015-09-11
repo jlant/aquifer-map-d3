@@ -4,12 +4,15 @@ var map = (function(map, $, d3) {
 	// default values
 	var mapType = 'btn-precip';
 	var sliderYear = '1980';
+	var mapChart = undefined;
 	var zoom = undefined;
 	var svg = undefined;
 	var container = undefined;
 	var path = undefined;
-	var csvFileName = undefined;
-	var url = undefined;
+	var csvFileName_map = undefined;
+	var csvFileName_timeseries = undefined;
+	var url_map = undefined;
+	var url_timeseries = undefined;
 
 	// example data
 	var dataNum = [3, 6, 2, 7, 5, 2, 0, 3, 8, 9, 2, 5, 7, 5, 2, 4, 5, 1, 5, 10, 5, 1, 5, 5, 4, 5, 6, 1, 8, 9, 5, 6];
@@ -24,7 +27,7 @@ var map = (function(map, $, d3) {
 	var mapHeight = 700;
 	var mapOrigWidth = undefined;
 	var multiplier = 1;
-
+	
 	// chart axes
 	var x = d3.scale.linear()
 		.domain([0, dataNum.length])
@@ -120,8 +123,6 @@ var map = (function(map, $, d3) {
 			var iy = d3.interpolate(y.domain(), [-mapHeight / 2, mapHeight / 2]);
 			return function(t) {
 				zoom.x(x.domain(ix(t))).y(y.domain(iy(t)));
-				svg.select(".x.axis").call(xAxis);
-				svg.select(".y.axis").call(yAxis);
 				svg.call(zoom.event);
 			};
 		});
@@ -190,8 +191,6 @@ var map = (function(map, $, d3) {
 		
 		// create zoom and pan functionality
 		zoom = d3.behavior.zoom()
-			.x(x)
-			.y(y)
 			.translate([0,0])
 			.scale(1)
 			.scaleExtent([1,10])
@@ -249,7 +248,7 @@ var map = (function(map, $, d3) {
 	var generateChart = function() {
 		console.log("at generateChart");
 		
-		var mapChart = d3.select("#map-aquifer-chart").append("svg")
+		mapChart = d3.select("#map-aquifer-chart").append("svg")
 			.attr('id', 'map-aquifer-chart-svg')
 			.attr("width", chartW)
 			.attr("height", chartH)
@@ -271,10 +270,6 @@ var map = (function(map, $, d3) {
 			.attr("dy", ".75em")
 			.style("text-anchor", "end")
 			.text("ylabel");
-
-		mapChart.append("path")
-			.attr("class", "chartLineA")
-			.attr("d", line(dataNum));
 	}
 	
 	// Populate chart
@@ -292,6 +287,10 @@ var map = (function(map, $, d3) {
 		$('#chart-title').text('HUC8: ');
 		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
 		$('#chart-header2 .chart-type').text(chartLabel);
+		
+		mapChart.append("path")
+			.attr("class", "chartLineA")
+			.attr("d", line(dataNum));
 	}
 	
 	// Determine which data to load
@@ -310,12 +309,16 @@ var map = (function(map, $, d3) {
 			dataName = 'recharge'
 		}
 		
-		csvFileName = (dataName + '_' + sliderYear + '.csv');
-		console.log(csvFileName);
+		csvFileName_map = (dataName + '_' + sliderYear + '.csv');
+		console.log(csvFileName_map);
+		
+		csvFileName_timeseries = ('time-series_' + dataName + '_mean.csv');
+		console.log(csvFileName_timeseries);
 		
 		// path to the SWB model data
-		url = ('data/' + csvFileName);
-		console.log(url);
+		url_map = ('data/' + csvFileName_map);
+		console.log(url_map);
+		url_timeseries = ('data/' + csvFileName_timeseries);
 		
 		loadData();
 	}
@@ -333,13 +336,15 @@ var map = (function(map, $, d3) {
 			.projection(mapProjection);
 		
 		queue()
-			.defer(d3.csv, url)
-			.defer(d3.json, "data/conus.json")
-			.defer(d3.json, "data/WBD_HUC8_PMAS_sa_Geo.json")
+			.defer(d3.csv, url_map)   // modelVar
+			.defer(d3.csv, url_timeseries)   // modelTS
+			.defer(d3.json, "data/conus.json")   // json_conus
+			.defer(d3.json, "data/WBD_HUC8_PMAS_sa_Geo.json")   // json_huc8
 			.await(drawMap);
 		
-		function drawMap(error, modelVar, json_conus, json_huc8) {
+		function drawMap(error, modelVar, modelTS, json_conus, json_huc8) {
 			if (error) { return console.error(error) };
+			console.log("hello#1");
 			
 			// set the input domain for the color scale
 			color.domain([
@@ -353,9 +358,6 @@ var map = (function(map, $, d3) {
 				.append("path")
 				.attr("class", "conus-states")
 				.attr("d", path)
-			
-			console.log("hello#1");
-			populateChart();
 
 			// merge the modelVar data and geojson
 			for (var i = 0; i < modelVar.length; i++) {
@@ -387,6 +389,26 @@ var map = (function(map, $, d3) {
 				}	
 			}
 			
+			// get the time-series data for the selected HUC8
+			console.log(modelTS);
+			var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === '02050204';});
+			console.log(hts);
+			
+			var keys = [];
+			var values = [];
+			for(var k in hts[0]) {
+				keys.push(+k);
+				values.push(+hts[0][k]);
+			}
+			
+			// remove the first item of an array
+			keys.shift();
+			values.shift();
+			
+			console.log(keys);
+			console.log(values);
+			console.log(d3.extent(keys));
+			console.log(d3.extent(values));
 			console.log("hello#2");
 			console.log(json_huc8);
 			
@@ -424,6 +446,7 @@ var map = (function(map, $, d3) {
 				})
 			
 			console.log("hello#3");
+			populateChart();
 			colorMap();
 			addLegend();
 			console.log("hello#4");
