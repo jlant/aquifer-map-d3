@@ -410,19 +410,19 @@ var map = (function(map, $, d3) {
 					getHUC8data(modelTS, mouseoverHUC8);
 				})
 				.on("mouseout", function(d) {
-						d3.select(this)
-							.transition().duration(10)
-							.attr("stroke-width", 1)
-						return tooltip_HUC8.style("visibility", "hidden");
+					d3.select(this)
+						.transition().duration(10)
+						.attr("stroke-width", 1)
+					tooltip_HUC8.style("visibility", "hidden");
 				})
 				.on("click", function(d) {
-					return tooltip_HUC8.style("visibility", "visible")
+					tooltip_HUC8.style("visibility", "visible")
 						.style("top", (d3.event.pageY + 10) + "px")
 						.style("left", (d3.event.pageX + 10) + "px")
 						.html("HUC8: " + d.properties.HUC_8 + "<br>" + "Year: " + sliderYear + "<br>" + "Max: " + d.properties.modelVar_max.toPrecision(3) + " in/yr" + "<br>" + "Mean: " + d.properties.modelVar_mean.toPrecision(3) + " in/yr" + "<br>" + "Min: " + d.properties.modelVar_min.toPrecision(3) + " in/yr");
 				})
 				.on("mousemove", function() {
-					return tooltip_HUC8.style("top", (d3.event.pageY + 10) + "px")
+					tooltip_HUC8.style("top", (d3.event.pageY + 10) + "px")
 						.style("left", (d3.event.pageX + 10) + "px");
 				})
 			
