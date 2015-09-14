@@ -4,6 +4,7 @@ var map = (function(map, $, d3) {
 	// default values
 	var mapType = 'btn-precip';
 	var sliderYear = '1980';
+	var mouseoverHUC8 = '05010002';
 	var mapChart = undefined;
 	var zoom = undefined;
 	var svg = undefined;
@@ -370,7 +371,7 @@ var map = (function(map, $, d3) {
 			
 			// get the time-series data for the selected HUC8
 			console.log(modelTS);
-			var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === '02050204';});
+			var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === mouseoverHUC8;});
 			console.log(hts);
 			
 			var data_year = [];
@@ -402,11 +403,11 @@ var map = (function(map, $, d3) {
 			container.selectAll(".huc8s")
 				.data(json_huc8.features)
 				.on("mouseover", function(d) {
+					mouseoverHUC8 = d.properties.HUC_8;
 					d3.select(this)
 						.transition().duration(10)
 						.attr("stroke-width", 3);
-					d3.select("#chart-title").text("HUC8: " + d.properties.HUC_8);
-					getHUC8data(modelTS, d.properties.HUC_8);
+					getHUC8data(modelTS, mouseoverHUC8);
 				})
 				.on("mouseout", function(d) {
 						d3.select(this)
@@ -426,7 +427,7 @@ var map = (function(map, $, d3) {
 				})
 			
 			console.log("hello#3");
-			populateChart(data_year, data_inyr);
+			populateChart(mouseoverHUC8, data_year, data_inyr);
 			colorMap();
 			addLegend();
 			console.log("hello#4");
@@ -454,11 +455,11 @@ var map = (function(map, $, d3) {
 		data_year.shift();
 		data_inyr.shift();
 		
-		populateChart(data_year, data_inyr);
+		populateChart(mouseoverHUC8, data_year, data_inyr);
 	}
 	
 	// Populate chart
-	var populateChart = function(data_year, data_inyr) {
+	var populateChart = function(mouseoverHUC8, data_year, data_inyr) {
 		var chartLabel = '';
 		if( mapType == 'btn-precip'){
 			chartLabel = 'Precipitation, in in/yr';
@@ -472,7 +473,7 @@ var map = (function(map, $, d3) {
 			chartLabel = 'Recharge, in in/yr';
 			y.domain([0, 24]);   // min: 1.4, max: 24.6
 		}
-		$('#chart-title').text('HUC8: ');
+		$('#chart-title').text('HUC8: ' + mouseoverHUC8);
 		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
 		$('#chart-header2 .chart-type').text(chartLabel);
 		
