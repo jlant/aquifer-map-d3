@@ -449,6 +449,7 @@ var map = (function(map, $, d3) {
 						.transition().duration(10)
 						.attr("stroke-width", 3);
 					d3.select("#chart-title").text("HUC8: " + d.properties.HUC_8);
+					getHUC8data(modelTS, d.properties.HUC_8);
 				})
 				.on("mouseout", function(d) {
 						d3.select(this)
@@ -473,6 +474,30 @@ var map = (function(map, $, d3) {
 			addLegend();
 			console.log("hello#4");
 		}
+	}
+	
+	// Get the time series data for the HUC8 on mouseover
+	var getHUC8data = function(modelTS, mouseoverHUC8) {
+		console.log("at getHUC8data");
+		console.log(mouseoverHUC8);
+		
+		// get the time-series data for the selected HUC8
+		console.log(modelTS);
+		var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === mouseoverHUC8;});
+		console.log(hts);
+		
+		var data_year = [];
+		var data_inyr = [];
+		for(var k in hts[0]) {
+			data_year.push(+k);
+			data_inyr.push(+hts[0][k]);
+		}
+		
+		// remove the first item of an array
+		data_year.shift();
+		data_inyr.shift();
+		
+		populateChart(data_year, data_inyr);
 	}
 	
 	// Set the color of each HUC-8 depending on the mapType (dataName) and sliderYear
