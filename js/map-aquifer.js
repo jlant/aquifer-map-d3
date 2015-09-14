@@ -20,8 +20,8 @@ var map = (function(map, $, d3) {
 	var chartM = 20;
 
 	// set width and height of svg element (aquifer map)
-	var mapWidth = 1100;
-	var mapHeight = 700;
+	var mapWidth = 0;
+	var mapHeight = 0;
 	var mapOrigWidth = undefined;
 	var multiplier = 1;
 	
@@ -198,41 +198,43 @@ var map = (function(map, $, d3) {
 	
 	var initData = function() {
 		
-		setResizer();
+		setDimensions();
+		resizeMap();
+		
+		$(window).resize(function() {
+			setDimensions();
+			resizeMap();
+		});
+		
 		generateChart();
 		whichData();
 		$('#map-aquifer').css('height', 'auto')
 	}
 	
-	var setResizer = function() {
-		$(window).resize(function() {
-			setDimensions();
-			
-			d3.select("#map-aquifer-svg")
-				.attr("width", mapWidth)
-				.attr("height", mapHeight);
-			
-			container.attr("transform", 'scale(' + mapWidth/mapOrigWidth + ')')
-		});
-	}
-	
 	var setDimensions = function() {
-		
 		// mapWidth = $(window).width();
-		mapWidth = mapWidth * multiplier;
+		mapWidth = $('#map-aquifer').width();
+		console.log(mapWidth);
 		
 		if(mapWidth < 1200) {
-			multiplier = 1
+			multiplier = 0.63;
 		}
 		else {
-			multipler = 1
+			multiplier = 0.63;
 		}
-		// mapHeight = mapWidth * multiplier;
-		mapHeight = mapHeight * multiplier;
+		mapHeight = mapWidth * multiplier;
 		
 		if(mapOrigWidth == undefined){
 			mapOrigWidth = mapWidth;
 		}
+	}
+	
+	var resizeMap = function() {
+		d3.select("#map-aquifer-svg")
+				.attr("width", mapWidth)
+				.attr("height", mapHeight);
+			
+		container.attr("transform", 'scale(' + mapWidth/mapOrigWidth + ')');
 	}
 	
 	// Generate chart
@@ -268,51 +270,6 @@ var map = (function(map, $, d3) {
 		
 		mapChart.append("path")
 			.attr("class", "chartLineA");
-	}
-	
-	// Populate chart
-	var populateChart = function(data_year, data_inyr) {
-		var chartLabel = '';
-		if( mapType == 'btn-precip'){
-			chartLabel = 'Precipitation, in in/yr';
-			y.domain([0, 90]);   // min: 26.5, max: 88.2
-		}
-		else if( mapType == 'btn-et'){
-			chartLabel = 'Evapotranspiration, in in/yr';
-			y.domain([0, 45]);   // min: 18.7, max: 42.8
-		}
-		else if( mapType == 'btn-recharge'){
-			chartLabel = 'Recharge, in in/yr';
-			y.domain([0, 24]);   // min: 1.4, max: 24.6
-		}
-		$('#chart-title').text('HUC8: ');
-		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
-		$('#chart-header2 .chart-type').text(chartLabel);
-		
-		console.log(data_year);
-		console.log(data_inyr);
-		
-		x.domain(d3.extent(data_year));
-		// y.domain(d3.extent(data_inyr));
-		
-		mapChart.select(".x-axis")
-			.call(xAxis);
-		
-		mapChart.select(".y-axis")
-			.call(yAxis);
-		
-		var lineData = [];
-		for (var i = 0; i < data_year.length; i++) {
-			lineData.push({"x": data_year[i], "y": data_inyr[i]});
-		}
-		console.log(lineData);
-		
-		var drawLine = d3.svg.line()
-			.x(function(d) { return x(d.x); })
-			.y(function(d) { return y(d.y); });
-		
-		mapChart.select(".chartLineA")
-			.attr("d", drawLine(lineData));
 	}
 	
 	// Determine which data to load
@@ -498,6 +455,51 @@ var map = (function(map, $, d3) {
 		data_inyr.shift();
 		
 		populateChart(data_year, data_inyr);
+	}
+	
+	// Populate chart
+	var populateChart = function(data_year, data_inyr) {
+		var chartLabel = '';
+		if( mapType == 'btn-precip'){
+			chartLabel = 'Precipitation, in in/yr';
+			y.domain([0, 90]);   // min: 26.5, max: 88.2
+		}
+		else if( mapType == 'btn-et'){
+			chartLabel = 'Evapotranspiration, in in/yr';
+			y.domain([0, 45]);   // min: 18.7, max: 42.8
+		}
+		else if( mapType == 'btn-recharge'){
+			chartLabel = 'Recharge, in in/yr';
+			y.domain([0, 24]);   // min: 1.4, max: 24.6
+		}
+		$('#chart-title').text('HUC8: ');
+		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
+		$('#chart-header2 .chart-type').text(chartLabel);
+		
+		console.log(data_year);
+		console.log(data_inyr);
+		
+		x.domain(d3.extent(data_year));
+		// y.domain(d3.extent(data_inyr));
+		
+		mapChart.select(".x-axis")
+			.call(xAxis);
+		
+		mapChart.select(".y-axis")
+			.call(yAxis);
+		
+		var lineData = [];
+		for (var i = 0; i < data_year.length; i++) {
+			lineData.push({"x": data_year[i], "y": data_inyr[i]});
+		}
+		console.log(lineData);
+		
+		var drawLine = d3.svg.line()
+			.x(function(d) { return x(d.x); })
+			.y(function(d) { return y(d.y); });
+		
+		mapChart.select(".chartLineA")
+			.attr("d", drawLine(lineData));
 	}
 	
 	// Set the color of each HUC-8 depending on the mapType (dataName) and sliderYear
