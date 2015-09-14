@@ -461,7 +461,7 @@ var map = (function(map, $, d3) {
 					return tooltip_HUC8.style("visibility", "visible")
 						.style("top", (d3.event.pageY + 10) + "px")
 						.style("left", (d3.event.pageX + 10) + "px")
-						.html("HUC8: " + d.properties.HUC_8 + "<br>" + "Max: " + d.properties.modelVar_max.toPrecision(3) + " in/yr" + "<br>" + "Mean: " + d.properties.modelVar_mean.toPrecision(3) + " in/yr" + "<br>" + "Min: " + d.properties.modelVar_min.toPrecision(3) + " in/yr");
+						.html("HUC8: " + d.properties.HUC_8 + "<br>" + "Year: " + sliderYear + "<br>" + "Max: " + d.properties.modelVar_max.toPrecision(3) + " in/yr" + "<br>" + "Mean: " + d.properties.modelVar_mean.toPrecision(3) + " in/yr" + "<br>" + "Min: " + d.properties.modelVar_min.toPrecision(3) + " in/yr");
 				})
 				.on("mousemove", function() {
 					return tooltip_HUC8.style("top", (d3.event.pageY + 10) + "px")
