@@ -16,7 +16,7 @@ var map = (function(map, $, d3) {
 
 	// set width, height, and margin of chart
 	var chartW = 390;
-	var chartH = 180;
+	var chartH = 200;
 	var chartM = 20;
 
 	// set width and height of svg element (aquifer map)
@@ -31,11 +31,9 @@ var map = (function(map, $, d3) {
 	
 	// chart axes
 	var x = d3.scale.linear()
-		// .domain([0, dataNum.length])
 		.range([0 + chartM, chartW - 2*chartM]);
 
 	var y = d3.scale.linear()
-		// .domain([0, 10])
 		.range([chartH - chartM, 0 + 2*chartM]);
 
 	var xAxis = d3.svg.axis()
@@ -276,13 +274,16 @@ var map = (function(map, $, d3) {
 	var populateChart = function(data_year, data_inyr) {
 		var chartLabel = '';
 		if( mapType == 'btn-precip'){
-			chartLabel = 'Precipitation, in in/yr'
+			chartLabel = 'Precipitation, in in/yr';
+			y.domain([0, 90]);   // min: 26.5, max: 88.2
 		}
 		else if( mapType == 'btn-et'){
-			chartLabel = 'Evapotranspiration, in in/yr'
+			chartLabel = 'Evapotranspiration, in in/yr';
+			y.domain([0, 45]);   // min: 18.7, max: 42.8
 		}
 		else if( mapType == 'btn-recharge'){
-			chartLabel = 'Recharge, in in/yr'
+			chartLabel = 'Recharge, in in/yr';
+			y.domain([0, 24]);   // min: 1.4, max: 24.6
 		}
 		$('#chart-title').text('HUC8: ');
 		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
@@ -292,7 +293,7 @@ var map = (function(map, $, d3) {
 		console.log(data_inyr);
 		
 		x.domain(d3.extent(data_year));
-		y.domain(d3.extent(data_inyr));
+		// y.domain(d3.extent(data_inyr));
 		
 		mapChart.select(".x-axis")
 			.call(xAxis);
