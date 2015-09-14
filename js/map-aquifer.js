@@ -14,9 +14,6 @@ var map = (function(map, $, d3) {
 	var url_map = undefined;
 	var url_timeseries = undefined;
 
-	// example data
-	var dataNum = [3, 6, 2, 7, 5, 2, 0, 3, 8, 9, 2, 5, 7, 5, 2, 4, 5, 1, 5, 10, 5, 1, 5, 5, 4, 5, 6, 1, 8, 9, 5, 6];
-
 	// set width, height, and margin of chart
 	var chartW = 390;
 	var chartH = 180;
@@ -43,16 +40,12 @@ var map = (function(map, $, d3) {
 
 	var xAxis = d3.svg.axis()
 		.scale(x)
-		.orient("bottom");
+		.orient("bottom")
+		.tickFormat(d3.format("d"));
 
 	var yAxis = d3.svg.axis()
 		.scale(y)
 		.orient("left");
-	
-	// chart line
-	// var line = d3.svg.line()
-		// .x(function(d,i) { return x(i); })
-		// .y(function(d) { return y(d); });
 	
 	// create a quantize scale (function) to sort data values into buckets of color
 	var color = d3.scale.quantize()
@@ -298,8 +291,7 @@ var map = (function(map, $, d3) {
 		console.log(data_year);
 		console.log(data_inyr);
 		
-		x.domain([0, data_inyr.length]);
-		// x.domain(d3.extent(data_year));
+		x.domain(d3.extent(data_year));
 		y.domain(d3.extent(data_inyr));
 		
 		mapChart.select(".x-axis")
@@ -308,17 +300,15 @@ var map = (function(map, $, d3) {
 		mapChart.select(".y-axis")
 			.call(yAxis);
 		
-		var lineData = data_inyr;
-		
-		// var line = d3.svg.line()
-			// .x(function(d) { return x(d.data_year); })
-			// .y(function(d) { return y(d.data_inyr); });
+		var lineData = [];
+		for (var i = 0; i < data_year.length; i++) {
+			lineData.push({"x": data_year[i], "y": data_inyr[i]});
+		}
+		console.log(lineData);
 		
 		var drawLine = d3.svg.line()
-			.x(function(d,i) { return x(i); })
-			.y(function(d) { return y(d); });
-		
-		console.log(drawLine);
+			.x(function(d) { return x(d.x); })
+			.y(function(d) { return y(d.y); });
 		
 		mapChart.select(".chartLineA")
 			.attr("d", drawLine(lineData));
