@@ -256,18 +256,25 @@ var map = (function(map, $, d3) {
 		mapChart.append("g")
 			.attr("class", "x-axis")
 			.attr("transform", "translate(0," + (chartH-chartM) + ")")
-			.call(xAxis);
+			.call(xAxis)
+			.append("text")
+			.attr("class", "x-label")
+			.attr("text-anchor", "end")
+			.attr("x", 195)
+			.attr("y", 35)
+			.text("Year");
 
 		mapChart.append("g")
 			.attr("class", "y-axis")
 			.attr("transform", "translate(" + chartM + ",0)")
 			.call(yAxis)
 			.append("text")
+			.attr("class", "y-label")
 			.attr("transform", "rotate(-90)")
-			.attr("y", 6)
-			.attr("dy", ".75em")
+			.attr("x", -90)
+			.attr("y", -35)
 			.style("text-anchor", "end")
-			.text("ylabel");
+			.text("in/yr");
 		
 		mapChart.append("path")
 			.attr("class", "chartLineA");
