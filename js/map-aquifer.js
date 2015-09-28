@@ -5,7 +5,9 @@ var map = (function(map, $, d3) {
 	var mapType = 'btn-precip';
 	var sliderYear = '1980';
 	var mouseoverHUC8 = '05010002';
+	var color = d3.scale.quantize().range([1,2,3,4,5,6,7,8,9]);
 	var mapChart = undefined;
+	var legend = undefined;
 	var zoom = undefined;
 	var svg = undefined;
 	var container = undefined;
@@ -45,10 +47,6 @@ var map = (function(map, $, d3) {
 	var yAxis = d3.svg.axis()
 		.scale(y)
 		.orient("left");
-	
-	// create a quantize scale (function) to sort data values into buckets of color
-	var color = d3.scale.quantize()
-		.range(colorbrewer.RdYlBu[9]);
 	
 	// add a tooltip
 	var tooltip_HUC8 = d3.select("body")
@@ -128,23 +126,8 @@ var map = (function(map, $, d3) {
 			return color(value);
 		}
 		else {
-			return "#808080"; // gray
+			return '#808080'; // gray
 		}
-	}
-	
-	// keep...might need this above if different color schemes for the three maps
-	function calcolor() {
-		var color = '#eee';
-		if( mapType == 'btn-precip'){
-			color = 'blue'
-		}
-		else if( mapType == 'btn-et'){
-			color = 'red'
-		}
-		else if( mapType == 'btn-recharge'){
-			color = 'green'
-		}
-		return color;
 	}
 	
 	// ****MAIN****
@@ -278,24 +261,48 @@ var map = (function(map, $, d3) {
 		
 		mapChart.append("path")
 			.attr("class", "chartLineA");
+		
+		var ls_w = 20, ls_h = 20;
+		var legend_labels = ["Min", ".", ".", ".", ".", ".", ".", ".", "Max"];
+		
+		legend = svg.selectAll(".legend")
+			.data(color.range())
+			.enter()
+			.append("g")
+			.attr("class", "legend");
+
+		legend.append("rect")
+			.attr("x", 20)
+			.attr("y", function(d, i){ return mapHeight - (i*ls_h) - 2*ls_h;})
+			.attr("width", ls_w)
+			.attr("height", ls_h);
+
+		legend.append("text")
+			.attr("x", 50)
+			.attr("y", function(d, i){ return mapHeight - (i*ls_h) - ls_h - 4;})
+			.text(function(d, i){ return legend_labels[i]; });
 	}
 	
 	// Determine which data to load
 	var whichData = function() {
 		console.log("at whichData");
 		
-		// Construct fileName for .csv data file
+		// Set dataName and color range based on mapType
 		var dataName = '';
 		if( mapType == 'btn-precip'){
-			dataName = 'precip'
+			dataName = 'precip';
+			color.range(colorbrewer.RdYlBu[9]);
 		}
 		else if( mapType == 'btn-et'){
-			dataName = 'et'
+			dataName = 'et';
+			color.range(colorbrewer.YlOrRd[9]);
 		}
 		else if( mapType == 'btn-recharge'){
-			dataName = 'recharge'
+			dataName = 'recharge';
+			color.range(colorbrewer.YlGnBu[9]);
 		}
 		
+		// Construct fileName for .csv data file
 		csvFileName_map = (dataName + '_' + sliderYear + '.csv');
 		console.log(csvFileName_map);
 		
@@ -522,27 +529,9 @@ var map = (function(map, $, d3) {
 	var addLegend = function() {
 		console.log("at addLegend");
 		
-		var legend_labels = ["Dry", ".", ".", ".", ".", ".", ".", ".", "Wet"];
-
-		var legend = svg.selectAll("g.legend")
+		legend = svg.selectAll(".legend")
 			.data(color.range())
-			.enter()
-			.append("g")
-			.attr("class", "legend");
-
-		var ls_w = 20, ls_h = 20;
-
-		legend.append("rect")
-			.attr("x", 20)
-			.attr("y", function(d, i){ return mapHeight - (i*ls_h) - 2*ls_h;})
-			.attr("width", ls_w)
-			.attr("height", ls_h)
 			.style("fill", function(d) { return d; });
-
-		legend.append("text")
-			.attr("x", 50)
-			.attr("y", function(d, i){ return mapHeight - (i*ls_h) - ls_h - 4;})
-			.text(function(d, i){ return legend_labels[i]; });
 	}
 
 	// End stuff
