@@ -191,6 +191,7 @@ var map = (function(map, $, d3) {
 		});
 		
 		generateChart();
+		generateLegend();
 		whichData();
 		$('#map-aquifer').css('height', 'auto')
 	}
@@ -261,6 +262,11 @@ var map = (function(map, $, d3) {
 		
 		mapChart.append("path")
 			.attr("class", "chartLineA");
+	}
+	
+	// Generate legend
+	var generateLegend = function() {
+		console.log("at generateLegend");
 		
 		var ls_w = 20, ls_h = 20;
 		var legend_labels = ["Min", ".", ".", ".", ".", ".", ".", ".", "Max"];
@@ -280,6 +286,7 @@ var map = (function(map, $, d3) {
 		legend.append("text")
 			.attr("x", 50)
 			.attr("y", function(d, i){ return mapHeight - (i*ls_h) - ls_h - 4;})
+			.attr("class", "legend-text")
 			.text(function(d, i){ return legend_labels[i]; });
 	}
 	
@@ -443,7 +450,7 @@ var map = (function(map, $, d3) {
 			console.log("hello#3");
 			populateChart(mouseoverHUC8, data_year, data_inyr);
 			colorMap();
-			addLegend();
+			populateLegend();
 			console.log("hello#4");
 		}
 	}
@@ -525,13 +532,18 @@ var map = (function(map, $, d3) {
 			.attr("fill", calculate_color);
 	}
 	
-	// Adding a legend
-	var addLegend = function() {
-		console.log("at addLegend");
+	// Populate legend
+	var populateLegend = function() {
+		console.log("at populateLegend");
+		
+		var legend_labels = [".", color.domain()[0], ".", ".", ".", ".", ".", ".", ".", color.domain()[1]];
 		
 		legend = svg.selectAll(".legend")
 			.data(color.range())
 			.style("fill", function(d) { return d; });
+		
+		legend.selectAll(".legend-text")
+			.text(function(i){ return legend_labels[i]; });
 	}
 
 	// End stuff
