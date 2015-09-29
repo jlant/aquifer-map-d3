@@ -16,6 +16,7 @@ var map = (function(map, $, d3) {
 	var csvFileName_timeseries = undefined;
 	var url_map = undefined;
 	var url_timeseries = undefined;
+	var url_por = undefined;
 
 	// set width, height, and margin of chart
 	var chartW = 390;
@@ -176,7 +177,6 @@ var map = (function(map, $, d3) {
 			.call(zoom.event);
 		
 		console.log("at initMap bottom");
-		// $.getScript("data/testdata.js", initData)
 		initData();
 	}
 	
@@ -262,6 +262,9 @@ var map = (function(map, $, d3) {
 		
 		mapChart.append("path")
 			.attr("class", "chartLineA");
+		
+		//mapChart.append("path")
+			//.attr("class", "chartLineB");
 	}
 	
 	// Generate legend
@@ -299,14 +302,17 @@ var map = (function(map, $, d3) {
 		if( mapType == 'btn-precip'){
 			dataName = 'precip';
 			color.range(colorbrewer.RdYlBu[9]);
+			url_por = 'data/precip_1980-2011.csv';
 		}
 		else if( mapType == 'btn-et'){
 			dataName = 'et';
 			color.range(colorbrewer.YlOrRd[9]);
+			url_por = 'data/et_1980-2011_w_0s.csv';
 		}
 		else if( mapType == 'btn-recharge'){
 			dataName = 'recharge';
 			color.range(colorbrewer.YlGnBu[9]);
+			url_por = 'data/recharge_1980-2011_w_0s.csv';
 		}
 		
 		// Construct fileName for .csv data file
@@ -339,11 +345,13 @@ var map = (function(map, $, d3) {
 		queue()
 			.defer(d3.csv, url_map)   // modelVar
 			.defer(d3.csv, url_timeseries)   // modelTS
+			.defer(d3.csv, url_por)   // modelPOR
 			.defer(d3.json, "data/conus.json")   // json_conus
+			.defer(d3.json, "data/PMAS_model_boundary_Geo.json")   // json_boundary
 			.defer(d3.json, "data/WBD_HUC8_PMAS_sa_Geo.json")   // json_huc8
 			.await(drawMap);
 		
-		function drawMap(error, modelVar, modelTS, json_conus, json_huc8) {
+		function drawMap(error, modelVar, modelTS, modelPOR, json_conus, json_boundary, json_huc8) {
 			if (error) { return console.error(error) };
 			console.log("hello#1");
 			
@@ -352,13 +360,6 @@ var map = (function(map, $, d3) {
 				d3.min(modelVar, function(d) { return parseFloat(d.MEAN); }),
 				d3.max(modelVar, function(d) { return parseFloat(d.MEAN); })
 				]);
-
-			container.selectAll(".conus-states")
-				.data(json_conus.features)
-				.enter()
-				.append("path")
-				.attr("class", "conus-states")
-				.attr("d", path)
 
 			// merge the modelVar data and geojson
 			for (var i = 0; i < modelVar.length; i++) {
@@ -383,6 +384,32 @@ var map = (function(map, $, d3) {
 						json_huc8.features[j].properties.modelVar_mean = modelVar_mean;
 						json_huc8.features[j].properties.modelVar_min = modelVar_min;
 						json_huc8.features[j].properties.modelVar_max = modelVar_max;
+
+						// stop looking through the geojson
+						break;
+					}
+				}	
+			}
+			
+			// merge the modelPOR mean and geojson
+			for (var i = 0; i < modelPOR.length; i++) {
+
+				// get the HUC8 name
+				var modelPOR_HUC8 = modelPOR[i].HUC_8;
+
+				// get the modelPOR mean and convert from string to float
+				var modelPOR_mean = parseFloat(modelPOR[i].MEAN);
+
+				// find the corresponding HUC8 inside the geojson
+				for (var j = 0; j < json_huc8.features.length; j++) {
+
+					// get the json HUC8 name
+					var json_HUC_8 = json_huc8.features[j].properties.HUC_8;
+
+					if (modelPOR_HUC8 === json_HUC_8) {
+
+						// copy the modelPOR values into the json
+						json_huc8.features[j].properties.modelPOR_mean = modelPOR_mean;
 
 						// stop looking through the geojson
 						break;
@@ -420,7 +447,24 @@ var map = (function(map, $, d3) {
 				.append("path")
 				.attr("class", "huc8s")
 				.attr("d", path);
-
+			
+			// bind the data and create one path for each geojson feature
+			container.selectAll(".conus-states")
+				.data(json_conus.features)
+				.enter()
+				.append("path")
+				.attr("class", "conus-states")
+				.attr("d", path);
+			
+			// bind the data and create one path for each geojson feature
+			container.selectAll(".model-boundary")
+				.data(json_boundary.features)
+				.enter()
+				.append("path")
+				.attr("class", "model-boundary")
+				.attr("d", path);
+			
+			// mouse events
 			container.selectAll(".huc8s")
 				.data(json_huc8.features)
 				.on("mouseover", function(d) {
@@ -440,12 +484,23 @@ var map = (function(map, $, d3) {
 					tooltip_HUC8.style("visibility", "visible")
 						.style("top", (d3.event.pageY + 10) + "px")
 						.style("left", (d3.event.pageX + 10) + "px")
-						.html("HUC8: " + d.properties.HUC_8 + "<br>" + "Year: " + sliderYear + "<br>" + "Max: " + d.properties.modelVar_max.toPrecision(3) + " in/yr" + "<br>" + "Mean: " + d.properties.modelVar_mean.toPrecision(3) + " in/yr" + "<br>" + "Min: " + d.properties.modelVar_min.toPrecision(3) + " in/yr");
+						.html("HUC8: " + d.properties.HUC_8 + "<br>" +
+							"Year: " + sliderYear + "<br>" +
+							"Max: " + d.properties.modelVar_max.toPrecision(3) + " in/yr" + "<br>" +
+							"Mean: " + d.properties.modelVar_mean.toPrecision(3) + " in/yr" + "<br>" +
+							"Min: " + d.properties.modelVar_min.toPrecision(3) + " in/yr" + "<br>" +
+							"1980-2011 mean: " + d.properties.modelPOR_mean.toPrecision(3) + " in/yr");
 				})
 				.on("mousemove", function() {
 					tooltip_HUC8.style("top", (d3.event.pageY + 10) + "px")
 						.style("left", (d3.event.pageX + 10) + "px");
-				})
+				});
+			
+			container.selectAll(".model-boundary")
+				.data(json_boundary.features)
+				.on("mouseout", function(d) {
+					console.log("mouseout!");
+				});
 			
 			console.log("hello#3");
 			populateChart(mouseoverHUC8, data_year, data_inyr);
@@ -522,6 +577,16 @@ var map = (function(map, $, d3) {
 		
 		mapChart.select(".chartLineA")
 			.attr("d", drawLine(lineData));
+		
+		updatePoint();
+	}
+	
+	// Update point on plot
+	var updatePoint = function() {
+		console.log("at updatePoint")
+		
+		//mapChart.select(".chartLineB")
+			//.attr("d", drawLine(lineData));
 	}
 	
 	// Set the color of each HUC-8 depending on the mapType (dataName) and sliderYear

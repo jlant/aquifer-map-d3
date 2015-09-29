@@ -67,7 +67,15 @@ svg {
 }
 
 .conus-states{
-	fill: #fff;
 	stroke: #ccc;
 	stroke-width: 2px;
+}
+
+.model-boundary{
+	stroke: green;
+	stroke-width: 1px;
+}
+
+.huc8s{
+	opacity: 1.0;
 }
