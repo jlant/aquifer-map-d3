@@ -44,6 +44,12 @@ svg {
     stroke-width: 1.5px;
 }
 
+.chartLineB{
+    fill: none;
+    stroke: black;
+    stroke-width: 0.5px;
+}
+
 #slider-box {
 	background-color: #E0E0E0;
 	padding: 7px;
@@ -67,15 +73,17 @@ svg {
 }
 
 .conus-states{
+	/*fill: white;*/
+	fill-opacity: 0.0;
 	stroke: #ccc;
-	stroke-width: 2px;
+	stroke-width: 1.5px;
 }
 
 .model-boundary{
-	stroke: green;
-	stroke-width: 1px;
+	stroke: black;
+	stroke-width: 0px;
 }
 
 .huc8s{
-	opacity: 1.0;
+	fill-opacity: 1.0;
 }

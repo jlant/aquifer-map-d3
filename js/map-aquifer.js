@@ -5,6 +5,7 @@ var map = (function(map, $, d3) {
 	var mapType = 'btn-precip';
 	var sliderYear = '1980';
 	var mouseoverHUC8 = '05010002';
+	var meanValuePOR = undefined;
 	var color = d3.scale.quantize().range([1,2,3,4,5,6,7,8,9]);
 	var mapChart = undefined;
 	var legend = undefined;
@@ -263,8 +264,11 @@ var map = (function(map, $, d3) {
 		mapChart.append("path")
 			.attr("class", "chartLineA");
 		
-		//mapChart.append("path")
-			//.attr("class", "chartLineB");
+		mapChart.append("path")
+			.attr("class", "chartLineB");
+		
+		mapChart.append("circle")
+			.attr("class", "chartPoint");
 	}
 	
 	// Generate legend
@@ -272,7 +276,6 @@ var map = (function(map, $, d3) {
 		console.log("at generateLegend");
 		
 		var ls_w = 20, ls_h = 20;
-		var legend_labels = ["Min", ".", ".", ".", ".", ".", ".", ".", "Max"];
 		
 		legend = svg.selectAll(".legend")
 			.data(color.range())
@@ -289,8 +292,7 @@ var map = (function(map, $, d3) {
 		legend.append("text")
 			.attr("x", 50)
 			.attr("y", function(d, i){ return mapHeight - (i*ls_h) - ls_h - 4;})
-			.attr("class", "legend-text")
-			.text(function(d, i){ return legend_labels[i]; });
+			.attr("class", "legend-text");
 	}
 	
 	// Determine which data to load
@@ -422,6 +424,9 @@ var map = (function(map, $, d3) {
 			var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === mouseoverHUC8;});
 			console.log(hts);
 			
+			var gff = $.grep(json_huc8.features, function(obj){return obj.properties.HUC_8 === mouseoverHUC8;});
+			console.log(gff);
+			
 			var data_year = [];
 			var data_inyr = [];
 			for(var k in hts[0]) {
@@ -469,10 +474,11 @@ var map = (function(map, $, d3) {
 				.data(json_huc8.features)
 				.on("mouseover", function(d) {
 					mouseoverHUC8 = d.properties.HUC_8;
+					meanValuePOR = d.properties.modelPOR_mean;
 					d3.select(this)
 						.transition().duration(10)
 						.attr("stroke-width", 3);
-					getHUC8data(modelTS, mouseoverHUC8);
+					getHUC8data(modelTS, mouseoverHUC8, meanValuePOR);
 				})
 				.on("mouseout", function(d) {
 					d3.select(this)
@@ -481,25 +487,20 @@ var map = (function(map, $, d3) {
 					tooltip_HUC8.style("visibility", "hidden");
 				})
 				.on("click", function(d) {
+					var format = d3.format("0.1f");
 					tooltip_HUC8.style("visibility", "visible")
 						.style("top", (d3.event.pageY + 10) + "px")
 						.style("left", (d3.event.pageX + 10) + "px")
 						.html("HUC8: " + d.properties.HUC_8 + "<br>" +
 							"Year: " + sliderYear + "<br>" +
-							"Max: " + d.properties.modelVar_max.toPrecision(3) + " in/yr" + "<br>" +
-							"Mean: " + d.properties.modelVar_mean.toPrecision(3) + " in/yr" + "<br>" +
-							"Min: " + d.properties.modelVar_min.toPrecision(3) + " in/yr" + "<br>" +
-							"1980-2011 mean: " + d.properties.modelPOR_mean.toPrecision(3) + " in/yr");
+							"Max: " + format(d.properties.modelVar_max) + " in/yr" + "<br>" +
+							"Mean: " + format(d.properties.modelVar_mean) + " in/yr" + "<br>" +
+							"Min: " + format(d.properties.modelVar_min) + " in/yr" + "<br>" +
+							"1980-2011 mean: " + format(d.properties.modelPOR_mean) + " in/yr");
 				})
 				.on("mousemove", function() {
 					tooltip_HUC8.style("top", (d3.event.pageY + 10) + "px")
 						.style("left", (d3.event.pageX + 10) + "px");
-				});
-			
-			container.selectAll(".model-boundary")
-				.data(json_boundary.features)
-				.on("mouseout", function(d) {
-					console.log("mouseout!");
 				});
 			
 			console.log("hello#3");
@@ -511,9 +512,10 @@ var map = (function(map, $, d3) {
 	}
 	
 	// Get the time series data for the HUC8 on mouseover
-	var getHUC8data = function(modelTS, mouseoverHUC8) {
+	var getHUC8data = function(modelTS, mouseoverHUC8, meanValuePOR) {
 		console.log("at getHUC8data");
 		console.log(mouseoverHUC8);
+		console.log(meanValuePOR);
 		
 		// get the time-series data for the selected HUC8
 		console.log(modelTS);
@@ -531,11 +533,11 @@ var map = (function(map, $, d3) {
 		data_year.shift();
 		data_inyr.shift();
 		
-		populateChart(mouseoverHUC8, data_year, data_inyr);
+		populateChart(mouseoverHUC8, data_year, data_inyr, meanValuePOR);
 	}
 	
 	// Populate chart
-	var populateChart = function(mouseoverHUC8, data_year, data_inyr) {
+	var populateChart = function(mouseoverHUC8, data_year, data_inyr, meanValuePOR) {
 		var chartLabel = '';
 		if( mapType == 'btn-precip'){
 			chartLabel = 'Precipitation, in in/yr';
@@ -578,6 +580,11 @@ var map = (function(map, $, d3) {
 		mapChart.select(".chartLineA")
 			.attr("d", drawLine(lineData));
 		
+		var lineData = [{"x": 1980, "y": meanValuePOR}, {"x": 2011, "y": meanValuePOR}];
+ 
+		mapChart.select(".chartLineB")
+			.attr("d", drawLine(lineData));
+		
 		updatePoint();
 	}
 	
@@ -585,8 +592,12 @@ var map = (function(map, $, d3) {
 	var updatePoint = function() {
 		console.log("at updatePoint")
 		
-		//mapChart.select(".chartLineB")
-			//.attr("d", drawLine(lineData));
+		mapChart.select(".chartPoint")
+			.attr("cx", 100)
+			.attr("cy", 100)
+			.attr("r", 3)
+			.attr("stroke", "black")
+			.attr("fill", "black");
 	}
 	
 	// Set the color of each HUC-8 depending on the mapType (dataName) and sliderYear
@@ -601,14 +612,25 @@ var map = (function(map, $, d3) {
 	var populateLegend = function() {
 		console.log("at populateLegend");
 		
-		var legend_labels = [".", color.domain()[0], ".", ".", ".", ".", ".", ".", ".", color.domain()[1]];
-		
+		// color
 		legend = svg.selectAll(".legend")
 			.data(color.range())
 			.style("fill", function(d) { return d; });
+			
+		console.log(color.range());
+		console.log(color.domain());
 		
+		// text
+		var legend_labels = [];
 		legend.selectAll(".legend-text")
-			.text(function(i){ return legend_labels[i]; });
+			.data(color.range())
+			.text(function(d) {
+				console.log(d);
+				legend_labels = color.invertExtent(d);
+				console.log(legend_labels);
+				var format = d3.format("0.1f");
+				return format(+legend_labels[0]) + " - " + format(+legend_labels[1]);
+			});
 	}
 
 	// End stuff
