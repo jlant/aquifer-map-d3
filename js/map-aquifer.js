@@ -576,6 +576,7 @@ var map = (function(map, $, d3) {
 		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
 		$('#chart-header2 .chart-type').text(chartLabel);
 		
+		console.log('at mid populateChart')
 		console.log(data_year);
 		console.log(data_inyr);
 		
@@ -615,15 +616,12 @@ var map = (function(map, $, d3) {
 		console.log(lineData);
 		console.log(sliderYear);
 		
-		//var mm = $.grep(lineData, function(obj){return obj.x === sliderYear;});
-		//console.log(mm);
-		//var nn = mm[0].y;
-		//console.log(nn);
+		var dataXY = $.grep(lineData, function(obj){return obj.x === parseInt(sliderYear);});
 		
 		mapChart.select(".chartPoint")
-			.attr("cx", 100)
-			.attr("cy", 100)
-			.attr("r", 3)
+			.attr("cx", x(dataXY[0].x))
+			.attr("cy", y(dataXY[0].y))
+			.attr("r", 2)
 			.attr("stroke", "black")
 			.attr("fill", "black");
 	}
