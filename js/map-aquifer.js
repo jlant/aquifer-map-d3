@@ -50,7 +50,7 @@ var map = (function(map, $, d3) {
 		.scale(y)
 		.orient("left");
 	
-	// add a tooltip
+	// tooltip
 	var tooltip_HUC8 = d3.select("body")
 		.append("div")
 		.attr("class", "tooltip_HUC8");
@@ -275,10 +275,10 @@ var map = (function(map, $, d3) {
 			.text("in/yr");
 		
 		mapChart.append("path")
-			.attr("class", "chartLineA");
+			.attr("class", "chartLineTS");
 		
 		mapChart.append("path")
-			.attr("class", "chartLineB");
+			.attr("class", "chartLineMean");
 		
 		mapChart.append("circle")
 			.attr("class", "chartPoint");
@@ -300,7 +300,8 @@ var map = (function(map, $, d3) {
 			.attr("x", 20)
 			.attr("y", function(d, i){ return mapHeight - (i*ls_h) - 2*ls_h;})
 			.attr("width", ls_w)
-			.attr("height", ls_h);
+			.attr("height", ls_h)
+			.attr("class", "legend-rect");
 
 		legend.append("text")
 			.attr("x", 50)
@@ -440,7 +441,6 @@ var map = (function(map, $, d3) {
 			console.log(modelTS);
 			var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === mouseoverHUC8;});
 			console.log(hts);
-			
 			var data_year = [];
 			var data_inyr = [];
 			for(var k in hts[0]) {
@@ -543,7 +543,6 @@ var map = (function(map, $, d3) {
 		console.log(modelTS);
 		var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === mouseoverHUC8;});
 		console.log(hts);
-		
 		var data_year = [];
 		var data_inyr = [];
 		for(var k in hts[0]) {
@@ -599,20 +598,27 @@ var map = (function(map, $, d3) {
 			.x(function(d) { return x(d.x); })
 			.y(function(d) { return y(d.y); });
 		
-		mapChart.select(".chartLineA")
+		mapChart.select(".chartLineTS")
 			.attr("d", drawLine(lineData));
 		
-		var lineData = [{"x": 1980, "y": meanValuePOR}, {"x": 2011, "y": meanValuePOR}];
+		var linePORmean = [{"x": 1980, "y": meanValuePOR}, {"x": 2011, "y": meanValuePOR}];
  
-		mapChart.select(".chartLineB")
-			.attr("d", drawLine(lineData));
+		mapChart.select(".chartLineMean")
+			.attr("d", drawLine(linePORmean));
 		
-		updatePoint();
+		updatePoint(lineData);
 	}
 	
 	// Update point on plot
-	var updatePoint = function() {
-		console.log("at updatePoint")
+	var updatePoint = function(lineData) {
+		console.log("at updatePoint");
+		console.log(lineData);
+		console.log(sliderYear);
+		
+		//var mm = $.grep(lineData, function(obj){return obj.x === sliderYear;});
+		//console.log(mm);
+		//var nn = mm[0].y;
+		//console.log(nn);
 		
 		mapChart.select(".chartPoint")
 			.attr("cx", 100)
@@ -634,24 +640,21 @@ var map = (function(map, $, d3) {
 	var populateLegend = function() {
 		console.log("at populateLegend");
 		
-		// color
-		legend = svg.selectAll(".legend")
-			.data(color.range())
-			.style("fill", function(d) { return d; });
-			
 		console.log(color.range());
 		console.log(color.domain());
 		
+		// color
+		legend = svg.selectAll(".legend-rect")
+			.data(color.range())
+			.style("fill", function(d) { return d; });
+		
 		// text
-		var legend_labels = [];
-		legend.selectAll(".legend-text")
+		legend = svg.selectAll(".legend-text")
 			.data(color.range())
 			.text(function(d) {
-				console.log(d);
-				legend_labels = color.invertExtent(d);
-				console.log(legend_labels);
+				var legend_label = color.invertExtent(d);
 				var format = d3.format("0.1f");
-				return format(+legend_labels[0]) + " - " + format(+legend_labels[1]);
+				return format(+legend_label[0]) + " - " + format(+legend_label[1]);
 			});
 	}
 

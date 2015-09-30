@@ -38,13 +38,13 @@ svg {
     shape-rendering: crispEdges;
 }
 
-.chartLineA{
+.chartLineTS {
     fill: none;
     stroke: steelblue;
     stroke-width: 1.5px;
 }
 
-.chartLineB{
+.chartLineMean {
     fill: none;
     stroke: black;
     stroke-width: 0.5px;
@@ -55,7 +55,7 @@ svg {
 	padding: 7px;
 }
 
-.slider{
+.slider {
 	margin-left: 30px;
 }
 
@@ -67,37 +67,37 @@ svg {
 	float: right;
 }
 
-#map-aquifer-container{
+#map-aquifer-container {
 	border: 1px solid #ccc;
 	margin-top: 20px;
 }
 
-.bounding-box{
+.bounding-box {
 	fill: white;
 	stroke: #ccc;
 	stroke-width: 0px;
 }
 
-.conus-states{
+.conus-states {
 	fill: white;
 	fill-opacity: 0.0;
 	stroke: #ccc;
 	stroke-width: 1.5px;
 }
 
-.model-boundary{
+.model-boundary {
 	fill: white;
 	fill-opacity: 0.0;
 	stroke: black;
 	stroke-width: 0px;
 }
 
-.huc8s-fill{
+.huc8s-fill {
 	stroke: black;
 	stroke-width: 0px;
 }
 
-.huc8s-outline{
+.huc8s-outline {
 	fill: white;
 	fill-opacity: 0.0;
 }
