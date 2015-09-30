@@ -177,6 +177,19 @@ var map = (function(map, $, d3) {
 			.call(zoom)
 			.call(zoom.event);
 		
+		// draw bounding box (this is needed b/c state outlines have no fill and pan needs drawn elements to grab)
+		d3.json("data/boundingBox.json", function(error, json_boundingBox) {
+			if (error) return console.warn(error);
+			
+			// bind the data and create one path for each geojson feature
+			container.selectAll(".bounding-box")
+				.data(json_boundingBox.features)
+				.enter()
+				.append("path")
+				.attr("class", "bounding-box")
+				.attr("d", path);
+		});
+		
 		console.log("at initMap bottom");
 		initData();
 	}

@@ -72,8 +72,13 @@ svg {
 	margin-top: 20px;
 }
 
+.bounding-box{
+	fill: white;
+	stroke: #ccc;
+	stroke-width: 0px;
+}
+
 .conus-states{
-	/*fill: white;*/
 	fill-opacity: 0.0;
 	stroke: #ccc;
 	stroke-width: 1.5px;
