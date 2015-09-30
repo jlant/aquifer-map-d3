@@ -79,6 +79,7 @@ svg {
 }
 
 .conus-states{
+	fill: white;
 	fill-opacity: 0.0;
 	stroke: #ccc;
 	stroke-width: 1.5px;
@@ -89,6 +90,12 @@ svg {
 	stroke-width: 0px;
 }
 
-.huc8s{
-	fill-opacity: 1.0;
+.huc8s-fill{
+	stroke: black;
+	stroke-width: 0px;
+}
+
+.huc8s-outline{
+	fill: white;
+	fill-opacity: 0.0;
 }

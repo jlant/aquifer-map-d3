@@ -177,7 +177,7 @@ var map = (function(map, $, d3) {
 			.call(zoom)
 			.call(zoom.event);
 		
-		// draw bounding box (this is needed b/c state outlines have no fill and pan needs drawn elements to grab)
+		// draw bounding box (to allow larger pan extent instead of just the states; pan needs drawn elements to grab)
 		d3.json("data/boundingBox.json", function(error, json_boundingBox) {
 			if (error) return console.warn(error);
 			
@@ -460,11 +460,11 @@ var map = (function(map, $, d3) {
 			console.log(json_huc8);
 			
 			// bind the data and create one path for each geojson feature
-			container.selectAll(".huc8s")
+			container.selectAll(".huc8s-fill")
 				.data(json_huc8.features)
 				.enter()
 				.append("path")
-				.attr("class", "huc8s")
+				.attr("class", "huc8s-fill")
 				.attr("d", path);
 			
 			// bind the data and create one path for each geojson feature
@@ -483,8 +483,16 @@ var map = (function(map, $, d3) {
 				.attr("class", "model-boundary")
 				.attr("d", path);
 			
+			// bind the data and create one path for each geojson feature
+			container.selectAll(".huc8s-outline")
+				.data(json_huc8.features)
+				.enter()
+				.append("path")
+				.attr("class", "huc8s-outline")
+				.attr("d", path);
+			
 			// mouse events
-			container.selectAll(".huc8s")
+			container.selectAll(".huc8s-outline")
 				.data(json_huc8.features)
 				.on("mouseover", function(d) {
 					mouseoverHUC8 = d.properties.HUC_8;
@@ -618,7 +626,7 @@ var map = (function(map, $, d3) {
 	var colorMap = function() {
 		console.log("at colorMap");
 		
-		container.selectAll(".huc8s")
+		container.selectAll(".huc8s-fill")
 			.attr("fill", calculate_color);
 	}
 	
