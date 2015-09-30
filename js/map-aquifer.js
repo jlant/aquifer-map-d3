@@ -419,13 +419,14 @@ var map = (function(map, $, d3) {
 				}	
 			}
 			
-			// get the time-series data for the selected HUC8
+			// get the period of record (POR) mean for the selected HUC-8
+			var hucTemp = $.grep(json_huc8.features, function(obj){return obj.properties.HUC_8 === mouseoverHUC8;});
+			var meanValuePOR = hucTemp[0].properties.modelPOR_mean;
+			
+			// get the time-series data for the selected HUC-8
 			console.log(modelTS);
 			var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === mouseoverHUC8;});
 			console.log(hts);
-			
-			var gff = $.grep(json_huc8.features, function(obj){return obj.properties.HUC_8 === mouseoverHUC8;});
-			console.log(gff);
 			
 			var data_year = [];
 			var data_inyr = [];
@@ -504,7 +505,7 @@ var map = (function(map, $, d3) {
 				});
 			
 			console.log("hello#3");
-			populateChart(mouseoverHUC8, data_year, data_inyr);
+			populateChart(mouseoverHUC8, data_year, data_inyr, meanValuePOR);
 			colorMap();
 			populateLegend();
 			console.log("hello#4");
