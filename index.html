@@ -40,7 +40,19 @@
         <hr>
 
 		<div class="row">
-            <div class="col-md-6">
+			<div class="col-md-4">
+				<p>Chart legend:</p>
+				<div id="legend-box">
+					<div id='chart-title'></div>
+					<div class='chart-row' id='chart-header1'>
+						<div class='chart-type'></div>
+					</div>
+					<div class='chart-row' id='chart-header2'>
+						<div class='chart-type'></div>
+					</div>
+				</div>
+            </div>
+            <div class="col-md-4">
                 <p>Select a map:</p>
                 <div class="btn-group" role="group" aria-label="...">
                     <button type="button" class="btn btn-primary" id="btn-precip">Precipitation</button>
@@ -48,7 +60,7 @@
                     <button type="button" class="btn btn-default" id="btn-recharge">Recharge</button>
                 </div>
             </div>
-			<div class="col-md-6">
+			<div class="col-md-4">
 				<p>Select a year:</p>
 				<div id="slider-box">
 					<input id="slider-year" type="text" data-slider-min="1980" data-slider-max="2011" data-slider-step="1" data-slider-value="1980"/>
@@ -56,23 +68,6 @@
 				</div>
             </div>
 		</div>
-
-		<div class="row">
-            <div class="col-md-12">
-			    <div id='popup-chart'>
-				    <div id='chart-title'></div>
-					
-					<div class='chart-row' id='chart-header1'>
-					    <div class='chart-type'></div>
-					</div>
-					<div class='chart-row' id='chart-header2'>
-					    <div class='chart-type'></div>
-					</div>
-					
-					<div id='map-aquifer-chart'></div>
-				</div>
-            </div>
-        </div>
 		
 		<div class="row" id="button-reset">
             <button>Reset zoom</button>

@@ -23,11 +23,10 @@ svg {
 	visibility: hidden;
 }
 
-#popup-chart {
-	width: 400px;
+#legend-box {
+	width: 300px;
 	border: 1px solid #ccc;
-	margin-top: 20px;
-	padding-top: 10px;
+	padding-left: 20px;
 	overflow: auto;
 }
 

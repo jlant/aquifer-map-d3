@@ -244,6 +244,20 @@ var map = (function(map, $, d3) {
 		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
 		$('#chart-header2 .chart-type').text('Precipitation, in in/yr');
 		
+		mapChart = svg.selectAll("#map-aquifer-chart")
+			.data([0])
+			.enter()
+			.append("g")
+			.attr("id", "map-aquifer-chart");
+		
+		mapChart.append("rect")
+			.attr("x", 1)
+			.attr("y", 10)
+			.attr("width", 395)
+			.attr("height", 195)
+			.attr("class", "chart-rect")
+			.style("fill", "white");
+		
 		mapChart = d3.select("#map-aquifer-chart").append("svg")
 			.attr('id', 'map-aquifer-chart-svg')
 			.attr("width", chartW)
