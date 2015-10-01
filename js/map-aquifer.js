@@ -526,11 +526,14 @@ var map = (function(map, $, d3) {
 						.style("top", (d3.event.pageY + 10) + "px")
 						.style("left", (d3.event.pageX + 10) + "px")
 						.html("HUC8: " + d.properties.HUC_8 + "<br>" +
+							"______________" + "<br>" +
 							"Year: " + sliderYear + "<br>" +
 							"Max: " + format(d.properties.modelVar_max) + " in/yr" + "<br>" +
 							"Mean: " + format(d.properties.modelVar_mean) + " in/yr" + "<br>" +
 							"Min: " + format(d.properties.modelVar_min) + " in/yr" + "<br>" +
-							"1980-2011 mean: " + format(d.properties.modelPOR_mean) + " in/yr");
+							"______________" + "<br>" +
+							"Year: 1980-2011" + "<br>" +
+							"Mean: " + format(d.properties.modelPOR_mean) + " in/yr");
 				})
 				.on("mousemove", function() {
 					tooltip_HUC8.style("top", (d3.event.pageY + 10) + "px")
