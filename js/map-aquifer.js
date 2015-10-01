@@ -94,7 +94,7 @@ var map = (function(map, $, d3) {
 	$("#slider-year").on("slide", function(slideEvt) {
 		sliderYear = slideEvt.value;
 		$("#sliderValue").text(slideEvt.value);
-		$('#chart-header2').text('Selected year: ' + slideEvt.value);
+		$('#chart-header2').html('<img src="images/small-black-dot.png" alt="(small black dot)" align="middle"> Selected year: ' + slideEvt.value);
 		whichData();
 	});
 	
@@ -241,9 +241,9 @@ var map = (function(map, $, d3) {
 		console.log("at generateChart");
 		
 		$('#chart-title').text('Precipitation, in in/yr, 1980-2011');
-		$('#chart-header1').text('HUC8: ');
-		$('#chart-header2').text('Year: ' + sliderYear);
-		$('#chart-header3').text('Mean (1980-2011)');
+		$('#chart-header1').html('<img src="images/thick-blue-line.png" alt="(thick blue line)" align="middle"> HUC8: ');
+		$('#chart-header2').html('<img src="images/small-black-dot.png" alt="(small black dot)" align="middle"> Selected year: ' + sliderYear);
+		$('#chart-header3').html('<img src="images/thin-black-line.png" alt="(thin black line)" align="middle"> Mean (1980-2011)');
 		
 		mapChart = svg.selectAll("#map-aquifer-chart")
 			.data([0])
@@ -593,8 +593,8 @@ var map = (function(map, $, d3) {
 			y.domain([0, 24]);   // min: 1.4, max: 24.6
 		}
 		$('#chart-title').text(chartLabel);
-		$('#chart-header1').text('HUC8: ' + mouseoverHUC8);
-		$('#chart-header2').text('Selected year: ' + sliderYear);
+		$('#chart-header1').html('<img src="images/thick-blue-line.png" alt="(thick blue line)" align="middle"> HUC8: ' + mouseoverHUC8);
+		$('#chart-header2').html('<img src="images/small-black-dot.png" alt="(small black dot)" align="middle"> Selected year: ' + sliderYear);
 		
 		x.domain(d3.extent(data_year));
 		// y.domain(d3.extent(data_inyr));
