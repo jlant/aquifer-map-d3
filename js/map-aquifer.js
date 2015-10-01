@@ -240,10 +240,10 @@ var map = (function(map, $, d3) {
 	var generateChart = function() {
 		console.log("at generateChart");
 		
-		$('#chart-title').text('Precipitation, in in/yr, 1980-2011');
+		$('#chart-title').text('Precipitation, in in/yr, 1980\u20132011');
 		$('#chart-header1').html('<img src="images/thick-blue-line.png" alt="(thick blue line)" align="middle"> HUC8: ');
 		$('#chart-header2').html('<img src="images/small-black-dot.png" alt="(small black dot)" align="middle"> Selected year: ' + sliderYear);
-		$('#chart-header3').html('<img src="images/thin-black-line.png" alt="(thin black line)" align="middle"> Mean (1980-2011)');
+		$('#chart-header3').html('<img src="images/thin-black-line.png" alt="(thin black line)" align="middle"> Mean (1980&#x2013;2011)');
 		
 		mapChart = svg.selectAll("#map-aquifer-chart")
 			.data([0])
@@ -533,7 +533,7 @@ var map = (function(map, $, d3) {
 							"Mean: " + format(d.properties.modelVar_mean) + " in/yr" + "<br>" +
 							"Min: " + format(d.properties.modelVar_min) + " in/yr" + "<br>" +
 							"______________" + "<br>" +
-							"Year: 1980-2011" + "<br>" +
+							"Year: 1980&#x2013;2011" + "<br>" +
 							"Mean: " + format(d.properties.modelPOR_mean) + " in/yr");
 				})
 				.on("mousemove", function() {
@@ -581,15 +581,15 @@ var map = (function(map, $, d3) {
 		
 		var chartLabel = '';
 		if( mapType == 'btn-precip'){
-			chartLabel = 'Precipitation, in in/yr, 1980-2011';
+			chartLabel = 'Precipitation, in in/yr, 1980\u20132011';
 			y.domain([0, 90]);   // min: 26.5, max: 88.2
 		}
 		else if( mapType == 'btn-et'){
-			chartLabel = 'Evapotranspiration, in in/yr, 1980-2011';
+			chartLabel = 'Evapotranspiration, in in/yr, 1980\u20132011';
 			y.domain([0, 45]);   // min: 18.7, max: 42.8
 		}
 		else if( mapType == 'btn-recharge'){
-			chartLabel = 'Recharge, in in/yr, 1980-2011';
+			chartLabel = 'Recharge, in in/yr, 1980\u20132011';
 			y.domain([0, 24]);   // min: 1.4, max: 24.6
 		}
 		$('#chart-title').text(chartLabel);
