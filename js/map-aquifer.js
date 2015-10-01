@@ -154,7 +154,7 @@ var map = (function(map, $, d3) {
 	}
 	
 	map.initMap = function() {
-		console.log("at initMap top");
+		console.log("at initMap");
 		
 		// create an svg element to the body of the html
 		svg = d3.select("#map-aquifer").append("svg")
@@ -190,11 +190,11 @@ var map = (function(map, $, d3) {
 				.attr("d", path);
 		});
 		
-		console.log("at initMap bottom");
 		initData();
 	}
 	
 	var initData = function() {
+		console.log("at initData");
 		
 		setDimensions();
 		resizeMap();
@@ -354,7 +354,6 @@ var map = (function(map, $, d3) {
 		
 		// path to the SWB model data
 		url_map = ('data/' + csvFileName_map);
-		console.log(url_map);
 		url_timeseries = ('data/' + csvFileName_timeseries);
 		
 		loadData();
@@ -452,9 +451,7 @@ var map = (function(map, $, d3) {
 			var meanValuePOR = hucTemp[0].properties.modelPOR_mean;
 			
 			// get the time-series data for the selected HUC-8
-			console.log(modelTS);
 			var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === mouseoverHUC8;});
-			console.log(hts);
 			var data_year = [];
 			var data_inyr = [];
 			for(var k in hts[0]) {
@@ -466,12 +463,9 @@ var map = (function(map, $, d3) {
 			data_year.shift();
 			data_inyr.shift();
 			
-			console.log(data_year);
-			console.log(data_inyr);
 			console.log(d3.extent(data_year));
 			console.log(d3.extent(data_inyr));
 			console.log("hello#2");
-			console.log(json_huc8);
 			
 			// bind the data and create one path for each geojson feature
 			container.selectAll(".huc8s-fill")
@@ -554,9 +548,7 @@ var map = (function(map, $, d3) {
 		console.log(meanValuePOR);
 		
 		// get the time-series data for the selected HUC8
-		console.log(modelTS);
 		var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === mouseoverHUC8;});
-		console.log(hts);
 		var data_year = [];
 		var data_inyr = [];
 		for(var k in hts[0]) {
@@ -573,6 +565,8 @@ var map = (function(map, $, d3) {
 	
 	// Populate chart
 	var populateChart = function(mouseoverHUC8, data_year, data_inyr, meanValuePOR) {
+		console.log("at populateChart");
+		
 		var chartLabel = '';
 		if( mapType == 'btn-precip'){
 			chartLabel = 'Precipitation, in in/yr';
@@ -590,10 +584,6 @@ var map = (function(map, $, d3) {
 		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
 		$('#chart-header2 .chart-type').text(chartLabel);
 		
-		console.log('at mid populateChart')
-		console.log(data_year);
-		console.log(data_inyr);
-		
 		x.domain(d3.extent(data_year));
 		// y.domain(d3.extent(data_inyr));
 		
@@ -607,7 +597,6 @@ var map = (function(map, $, d3) {
 		for (var i = 0; i < data_year.length; i++) {
 			lineData.push({"x": data_year[i], "y": data_inyr[i]});
 		}
-		console.log(lineData);
 		
 		var drawLine = d3.svg.line()
 			.x(function(d) { return x(d.x); })
@@ -627,8 +616,6 @@ var map = (function(map, $, d3) {
 	// Update point on plot
 	var updatePoint = function(lineData) {
 		console.log("at updatePoint");
-		console.log(lineData);
-		console.log(sliderYear);
 		
 		var dataXY = $.grep(lineData, function(obj){return obj.x === parseInt(sliderYear);});
 		
@@ -652,7 +639,6 @@ var map = (function(map, $, d3) {
 	var populateLegend = function() {
 		console.log("at populateLegend");
 		
-		console.log(color.range());
 		console.log(color.domain());
 		
 		// color
