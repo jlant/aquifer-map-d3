@@ -3,6 +3,15 @@ svg {
 	stroke: black;
 }
 
+.top-titles {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+#chart-title {
+	font-weight: bold;
+}
+
 .btn {
     width: 110px;
 }

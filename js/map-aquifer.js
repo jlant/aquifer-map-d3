@@ -6,7 +6,7 @@ var map = (function(map, $, d3) {
 	var sliderYear = '1980';
 	var mouseoverHUC8 = '05010002';
 	var meanValuePOR = undefined;
-	var color = d3.scale.quantize().range([1,2,3,4,5,6,7,8,9]);
+	var color = d3.scale.quantize();
 	var mapChart = undefined;
 	var legend = undefined;
 	var zoom = undefined;
@@ -21,7 +21,7 @@ var map = (function(map, $, d3) {
 
 	// set width, height, and margin of chart
 	var chartW = 390;
-	var chartH = 200;
+	var chartH = 250;
 	var chartM = 20;
 
 	// set width and height of svg element (aquifer map)
@@ -240,7 +240,7 @@ var map = (function(map, $, d3) {
 	var generateChart = function() {
 		console.log("at generateChart");
 		
-		$('#chart-title').text('Precipitation, in in/yr, 1980\u20132011');
+		$('#chart-title').text('PRECIPITATION');
 		$('#chart-header1').html('<img src="images/thick-blue-line.png" alt="(thick blue line)" align="middle"> HUC8: ');
 		$('#chart-header2').html('<img src="images/small-black-dot.png" alt="(small black dot)" align="middle"> Selected year: ' + sliderYear);
 		$('#chart-header3').html('<img src="images/thin-black-line.png" alt="(thin black line)" align="middle"> Mean (1980&#x2013;2011)');
@@ -254,8 +254,8 @@ var map = (function(map, $, d3) {
 		mapChart.append("rect")
 			.attr("x", 1)
 			.attr("y", 10)
-			.attr("width", 395)
-			.attr("height", 195)
+			.attr("width", chartW)
+			.attr("height", chartH-5)
 			.attr("class", "chart-rect")
 			.style("fill", "white");
 		
@@ -273,8 +273,8 @@ var map = (function(map, $, d3) {
 			.append("text")
 			.attr("class", "x-label")
 			.attr("text-anchor", "end")
-			.attr("x", 195)
-			.attr("y", 35)
+			.attr("x", chartW/2)
+			.attr("y", chartM+15)
 			.text("Year");
 
 		mapChart.append("g")
@@ -284,8 +284,8 @@ var map = (function(map, $, d3) {
 			.append("text")
 			.attr("class", "y-label")
 			.attr("transform", "rotate(-90)")
-			.attr("x", -90)
-			.attr("y", -35)
+			.attr("x", -chartH/2)
+			.attr("y", -chartM-15)
 			.style("text-anchor", "end")
 			.text("in/yr");
 		
@@ -305,8 +305,9 @@ var map = (function(map, $, d3) {
 		
 		var ls_w = 20, ls_h = 20;
 		
+		// number of boxes needed
 		legend = svg.selectAll(".legend")
-			.data(color.range())
+			.data([1,2,3,4,5,6,7,8,9])
 			.enter()
 			.append("g")
 			.attr("class", "legend");
@@ -322,6 +323,12 @@ var map = (function(map, $, d3) {
 			.attr("x", 50)
 			.attr("y", function(d, i){ return mapHeight - (i*ls_h) - ls_h - 4;})
 			.attr("class", "legend-text");
+		
+		legend.append("text")
+			.attr("x", 50)
+			.attr("y", 510)
+			.attr("class", "legend-units-text")
+			.text("(in/yr)");
 	}
 	
 	// Determine which data to load
@@ -581,15 +588,15 @@ var map = (function(map, $, d3) {
 		
 		var chartLabel = '';
 		if( mapType == 'btn-precip'){
-			chartLabel = 'Precipitation, in in/yr, 1980\u20132011';
+			chartLabel = 'PRECIPITATION';
 			y.domain([0, 90]);   // min: 26.5, max: 88.2
 		}
 		else if( mapType == 'btn-et'){
-			chartLabel = 'Evapotranspiration, in in/yr, 1980\u20132011';
+			chartLabel = 'EVAPOTRANSPIRATION';
 			y.domain([0, 45]);   // min: 18.7, max: 42.8
 		}
 		else if( mapType == 'btn-recharge'){
-			chartLabel = 'Recharge, in in/yr, 1980\u20132011';
+			chartLabel = 'RECHARGE';
 			y.domain([0, 24]);   // min: 1.4, max: 24.6
 		}
 		$('#chart-title').text(chartLabel);
