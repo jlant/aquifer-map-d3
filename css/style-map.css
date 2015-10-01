@@ -37,6 +37,15 @@ svg {
     shape-rendering: crispEdges;
 }
 
+.x-axis text,
+.y-axis text,
+.legend text {
+    font-family: sans-serif;
+    font-size: 13px;
+    fill: black;
+    stroke: none;
+}
+
 .chartLineTS {
     fill: none;
     stroke: steelblue;
