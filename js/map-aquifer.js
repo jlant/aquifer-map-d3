@@ -94,7 +94,7 @@ var map = (function(map, $, d3) {
 	$("#slider-year").on("slide", function(slideEvt) {
 		sliderYear = slideEvt.value;
 		$("#sliderValue").text(slideEvt.value);
-		$('#chart-header1 .chart-type').text('Year: ' + slideEvt.value);
+		$('#chart-header2 .chart-type').text('Selected year: ' + slideEvt.value);
 		whichData();
 	});
 	
@@ -240,9 +240,10 @@ var map = (function(map, $, d3) {
 	var generateChart = function() {
 		console.log("at generateChart");
 		
-		$('#chart-title').text('HUC8: ');
-		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
-		$('#chart-header2 .chart-type').text('Precipitation, in in/yr');
+		$('#chart-title').text('Precipitation, in in/yr, 1980-2011');
+		$('#chart-header1 .chart-type').text('HUC8: ');
+		$('#chart-header2 .chart-type').text('Year: ' + sliderYear);
+		$('#chart-header3 .chart-type').text('Mean (1980-2011)');
 		
 		mapChart = svg.selectAll("#map-aquifer-chart")
 			.data([0])
@@ -580,20 +581,20 @@ var map = (function(map, $, d3) {
 		
 		var chartLabel = '';
 		if( mapType == 'btn-precip'){
-			chartLabel = 'Precipitation, in in/yr';
+			chartLabel = 'Precipitation, in in/yr, 1980-2011';
 			y.domain([0, 90]);   // min: 26.5, max: 88.2
 		}
 		else if( mapType == 'btn-et'){
-			chartLabel = 'Evapotranspiration, in in/yr';
+			chartLabel = 'Evapotranspiration, in in/yr, 1980-2011';
 			y.domain([0, 45]);   // min: 18.7, max: 42.8
 		}
 		else if( mapType == 'btn-recharge'){
-			chartLabel = 'Recharge, in in/yr';
+			chartLabel = 'Recharge, in in/yr, 1980-2011';
 			y.domain([0, 24]);   // min: 1.4, max: 24.6
 		}
-		$('#chart-title').text('HUC8: ' + mouseoverHUC8);
-		$('#chart-header1 .chart-type').text('Year: ' + sliderYear);
-		$('#chart-header2 .chart-type').text(chartLabel);
+		$('#chart-title').text(chartLabel);
+		$('#chart-header1 .chart-type').text('HUC8: ' + mouseoverHUC8);
+		$('#chart-header2 .chart-type').text('Selected year: ' + sliderYear);
 		
 		x.domain(d3.extent(data_year));
 		// y.domain(d3.extent(data_inyr));
