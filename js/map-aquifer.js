@@ -459,9 +459,13 @@ var map = (function(map, $, d3) {
 				data_inyr.push(+hts[0][k]);
 			}
 			
-			// remove the first item of an array
-			data_year.shift();
-			data_inyr.shift();
+			// remove the NaN data pair (depending on the browser, not necessarily the first item in the array)
+			for(var i in data_year) {
+				if(isNaN(data_year[i])) {
+					data_year.splice(i,1);
+					data_inyr.splice(i,1);
+				}
+			}
 			
 			console.log(d3.extent(data_year));
 			console.log(d3.extent(data_inyr));
@@ -556,9 +560,13 @@ var map = (function(map, $, d3) {
 			data_inyr.push(+hts[0][k]);
 		}
 		
-		// remove the first item of an array
-		data_year.shift();
-		data_inyr.shift();
+		// remove the NaN data pair (depending on the browser, not necessarily the first item in the array)
+		for(var i in data_year) {
+			if(isNaN(data_year[i])) {
+				data_year.splice(i,1);
+				data_inyr.splice(i,1);
+			}
+		}
 		
 		populateChart(mouseoverHUC8, data_year, data_inyr, meanValuePOR);
 	}
