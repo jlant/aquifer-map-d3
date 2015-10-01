@@ -660,7 +660,7 @@ var map = (function(map, $, d3) {
 			.text(function(d) {
 				var legend_label = color.invertExtent(d);
 				var format = d3.format("0.1f");
-				return format(+legend_label[0]) + " - " + format(+legend_label[1]);
+				return format(+legend_label[0]) + " \u2013 " + format(+legend_label[1]);
 			});
 	}
 
