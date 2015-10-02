@@ -28,7 +28,8 @@ var map = (function(map, $, d3) {
 	var mapWidth = 0;
 	var mapHeight = 0;
 	var mapOrigWidth = undefined;
-	var multiplier = 1;
+	var multiplier = 0.58;
+	var legendTitleY = 455;
 	
 	// map axes
 	var x_map = d3.scale.linear();
@@ -135,26 +136,29 @@ var map = (function(map, $, d3) {
 	// ****MAIN****
 	
 	map.preInit = function() {
-		console.log("at preInit");
+		//console.log("at preInit");
 		
 		var tempWidth = $('#map-aquifer-container').width();
+		var windowHeight = $(window).height();
+		var tempAdjuster = 0;
 		
-		var tempMultiplier = 0;
-		
-		if(tempWidth < 1200) {
-			tempMultiplier = 1
+		if(tempWidth < 1169) {
+			tempAdjuster = 200;
 		}
-		else {
-			tempMultipler = 1
+		if(tempWidth < 969) {
+			tempAdjuster = 230;
+		}
+		if(tempWidth < 749) {
+			tempAdjuster = 260;
 		}
 		
-		var tempHeight = tempWidth * tempMultiplier;
+		var tempHeight = windowHeight - tempAdjuster;
 		
-		$('#map-aquifer').css('height', tempHeight)
+		$('#map-aquifer').css('height', tempHeight);
 	}
 	
 	map.initMap = function() {
-		console.log("at initMap");
+		//console.log("at initMap");
 		
 		// create an svg element to the body of the html
 		svg = d3.select("#map-aquifer").append("svg")
@@ -162,7 +166,7 @@ var map = (function(map, $, d3) {
 			.attr("width", mapWidth)
 			.attr("height", mapHeight)
 			.append("g");
-			
+		
 		// this is needed for pan performance
 		container = svg.append("g");
 		
@@ -194,7 +198,7 @@ var map = (function(map, $, d3) {
 	}
 	
 	var initData = function() {
-		console.log("at initData");
+		//console.log("at initData");
 		
 		setDimensions();
 		resizeMap();
@@ -211,16 +215,23 @@ var map = (function(map, $, d3) {
 	}
 	
 	var setDimensions = function() {
-		// mapWidth = $(window).width();
+		//console.log("at setDimensions");
+
 		mapWidth = $('#map-aquifer').width();
-		console.log(mapWidth);
 		
-		if(mapWidth < 1200) {
-			multiplier = 0.63;
+		if(mapWidth < 1169) {
+			multiplier = 0.58;
+			legendTitleY = 455;
 		}
-		else {
-			multiplier = 0.63;
+		if(mapWidth < 969) {
+			multiplier = 0.69;
+			legendTitleY = 442;
 		}
+		if(mapWidth < 749) {
+			multiplier = 0.72;
+			legendTitleY = 311;
+		}
+		
 		mapHeight = mapWidth * multiplier;
 		
 		if(mapOrigWidth == undefined){
@@ -238,7 +249,7 @@ var map = (function(map, $, d3) {
 	
 	// Generate chart
 	var generateChart = function() {
-		console.log("at generateChart");
+		//console.log("at generateChart");
 		
 		$('#chart-title').text('PRECIPITATION');
 		$('#chart-header1').html('<img src="images/thick-blue-line.png" alt="(thick blue line)" align="middle"> HUC8: ');
@@ -301,7 +312,7 @@ var map = (function(map, $, d3) {
 	
 	// Generate legend
 	var generateLegend = function() {
-		console.log("at generateLegend");
+		//console.log("at generateLegend");
 		
 		var ls_w = 20, ls_h = 20;
 		
@@ -326,14 +337,14 @@ var map = (function(map, $, d3) {
 		
 		legend.append("text")
 			.attr("x", 50)
-			.attr("y", 510)
+			.attr("y", legendTitleY)
 			.attr("class", "legend-units-text")
-			.text("(in/yr)");
+			.text("Inches per year");
 	}
 	
 	// Determine which data to load
 	var whichData = function() {
-		console.log("at whichData");
+		//console.log("at whichData");
 		
 		// Set dataName and color range based on mapType
 		var dataName = '';
@@ -355,10 +366,10 @@ var map = (function(map, $, d3) {
 		
 		// Construct fileName for .csv data file
 		csvFileName_map = (dataName + '_' + sliderYear + '.csv');
-		console.log(csvFileName_map);
+		//console.log(csvFileName_map);
 		
 		csvFileName_timeseries = ('time-series_' + dataName + '_mean.csv');
-		console.log(csvFileName_timeseries);
+		//console.log(csvFileName_timeseries);
 		
 		// path to the SWB model data
 		url_map = ('data/' + csvFileName_map);
@@ -368,11 +379,11 @@ var map = (function(map, $, d3) {
 	}
 
 	var loadData = function() {
-		console.log("at loadData");
+		//console.log("at loadData");
 		
 		// create projection
 		var mapProjection = d3.geo.albersUsa()
-			.translate([mapWidth / 15, mapHeight / 2])
+			.translate([mapWidth / 12, mapHeight / 2.1])
 			.scale([3000]);
 
 		// create path generator; converts geojson to svg path's ("M 100 100 L 300 100 L 200 300 z")
@@ -390,7 +401,7 @@ var map = (function(map, $, d3) {
 		
 		function drawMap(error, modelVar, modelTS, modelPOR, json_conus, json_boundary, json_huc8) {
 			if (error) { return console.error(error) };
-			console.log("hello#1");
+			//console.log("hello#1");
 			
 			// set the input domain for the color scale
 			color.domain([
@@ -475,9 +486,9 @@ var map = (function(map, $, d3) {
 				}
 			}
 			
-			console.log(d3.extent(data_year));
-			console.log(d3.extent(data_inyr));
-			console.log("hello#2");
+			//console.log(d3.extent(data_year));
+			//console.log(d3.extent(data_inyr));
+			//console.log("hello#2");
 			
 			// bind the data and create one path for each geojson feature
 			container.selectAll(".huc8s-fill")
@@ -548,19 +559,19 @@ var map = (function(map, $, d3) {
 						.style("left", (d3.event.pageX + 10) + "px");
 				});
 			
-			console.log("hello#3");
+			//console.log("hello#3");
 			populateChart(mouseoverHUC8, data_year, data_inyr, meanValuePOR);
 			colorMap();
 			populateLegend();
-			console.log("hello#4");
+			//console.log("hello#4");
 		}
 	}
 	
 	// Get the time series data for the HUC8 on mouseover
 	var getHUC8data = function(modelTS, mouseoverHUC8, meanValuePOR) {
-		console.log("at getHUC8data");
-		console.log(mouseoverHUC8);
-		console.log(meanValuePOR);
+		//console.log("at getHUC8data");
+		//console.log(mouseoverHUC8);
+		//console.log(meanValuePOR);
 		
 		// get the time-series data for the selected HUC8
 		var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === mouseoverHUC8;});
@@ -584,7 +595,7 @@ var map = (function(map, $, d3) {
 	
 	// Populate chart
 	var populateChart = function(mouseoverHUC8, data_year, data_inyr, meanValuePOR) {
-		console.log("at populateChart");
+		//console.log("at populateChart");
 		
 		var chartLabel = '';
 		if( mapType == 'btn-precip'){
@@ -634,7 +645,7 @@ var map = (function(map, $, d3) {
 	
 	// Update point on plot
 	var updatePoint = function(lineData) {
-		console.log("at updatePoint");
+		//console.log("at updatePoint");
 		
 		var dataXY = $.grep(lineData, function(obj){return obj.x === parseInt(sliderYear);});
 		
@@ -648,7 +659,7 @@ var map = (function(map, $, d3) {
 	
 	// Set the color of each HUC-8 depending on the mapType (dataName) and sliderYear
 	var colorMap = function() {
-		console.log("at colorMap");
+		//console.log("at colorMap");
 		
 		container.selectAll(".huc8s-fill")
 			.attr("fill", calculate_color);
@@ -656,9 +667,9 @@ var map = (function(map, $, d3) {
 	
 	// Populate legend
 	var populateLegend = function() {
-		console.log("at populateLegend");
+		//console.log("at populateLegend");
 		
-		console.log(color.domain());
+		//console.log(color.domain());
 		
 		// color
 		legend = svg.selectAll(".legend-rect")
