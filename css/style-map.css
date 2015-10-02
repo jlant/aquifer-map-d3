@@ -102,13 +102,6 @@ svg {
 	stroke-width: 1.5px;
 }
 
-.model-boundary {
-	fill: white;
-	fill-opacity: 0.0;
-	stroke: black;
-	stroke-width: 0px;
-}
-
 .huc8s-fill {
 	stroke: black;
 	stroke-width: 0px;

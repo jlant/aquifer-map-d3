@@ -395,11 +395,10 @@ var map = (function(map, $, d3) {
 			.defer(d3.csv, url_timeseries)   // modelTS
 			.defer(d3.csv, url_por)   // modelPOR
 			.defer(d3.json, "data/conus.json")   // json_conus
-			.defer(d3.json, "data/PMAS_model_boundary_Geo.json")   // json_boundary
 			.defer(d3.json, "data/WBD_HUC8_PMAS_sa_Geo.json")   // json_huc8
 			.await(drawMap);
 		
-		function drawMap(error, modelVar, modelTS, modelPOR, json_conus, json_boundary, json_huc8) {
+		function drawMap(error, modelVar, modelTS, modelPOR, json_conus, json_huc8) {
 			if (error) { return console.error(error) };
 			//console.log("hello#1");
 			
@@ -504,14 +503,6 @@ var map = (function(map, $, d3) {
 				.enter()
 				.append("path")
 				.attr("class", "conus-states")
-				.attr("d", path);
-			
-			// bind the data and create one path for each geojson feature
-			container.selectAll(".model-boundary")
-				.data(json_boundary.features)
-				.enter()
-				.append("path")
-				.attr("class", "model-boundary")
 				.attr("d", path);
 			
 			// bind the data and create one path for each geojson feature
