@@ -5,6 +5,7 @@ var map = (function(map, $, d3) {
 	var mapType = 'btn-precip';
 	var sliderYear = '1980';
 	var mouseoverHUC8 = '05010002';
+	var mouseoverHUC8name = 'Conewango';
 	var meanValuePOR = undefined;
 	var color = d3.scale.quantize();
 	var mapChart = undefined;
@@ -255,6 +256,7 @@ var map = (function(map, $, d3) {
 		$('#chart-header1').html('<img src="images/thick-blue-line.png" alt="(thick blue line)" align="middle"> HUC8: ');
 		$('#chart-header2').html('<img src="images/small-black-dot.png" alt="(small black dot)" align="middle"> Selected year: ' + sliderYear);
 		$('#chart-header3').html('<img src="images/thin-black-line.png" alt="(thin black line)" align="middle"> Mean (1980&#x2013;2011)');
+		$('#huc-name-text').html('HUC8: ');
 		
 		mapChart = svg.selectAll("#map-aquifer-chart")
 			.data([0])
@@ -394,11 +396,12 @@ var map = (function(map, $, d3) {
 			.defer(d3.csv, url_map)   // modelVar
 			.defer(d3.csv, url_timeseries)   // modelTS
 			.defer(d3.csv, url_por)   // modelPOR
+			.defer(d3.csv, "data/PMAS_HUC8_names.csv")   // huc8_names
 			.defer(d3.json, "data/conus.json")   // json_conus
 			.defer(d3.json, "data/WBD_HUC8_PMAS_sa_Geo.json")   // json_huc8
 			.await(drawMap);
 		
-		function drawMap(error, modelVar, modelTS, modelPOR, json_conus, json_huc8) {
+		function drawMap(error, modelVar, modelTS, modelPOR, huc8_names, json_conus, json_huc8) {
 			if (error) { return console.error(error) };
 			//console.log("hello#1");
 			
@@ -411,7 +414,7 @@ var map = (function(map, $, d3) {
 			// merge the modelVar data and geojson
 			for (var i = 0; i < modelVar.length; i++) {
 
-				// get the HUC8 name
+				// get the HUC8 number
 				var modelVar_HUC8 = modelVar[i].HUC_8;
 
 				// get the modelVar values (mean, min, max) and convert from string to float
@@ -422,7 +425,7 @@ var map = (function(map, $, d3) {
 				// find the corresponding HUC8 inside the geojson
 				for (var j = 0; j < json_huc8.features.length; j++) {
 
-					// get the json HUC8 name
+					// get the json HUC8 number
 					var json_HUC_8 = json_huc8.features[j].properties.HUC_8;
 
 					if (modelVar_HUC8 === json_HUC_8) {
@@ -441,7 +444,7 @@ var map = (function(map, $, d3) {
 			// merge the modelPOR mean and geojson
 			for (var i = 0; i < modelPOR.length; i++) {
 
-				// get the HUC8 name
+				// get the HUC8 number
 				var modelPOR_HUC8 = modelPOR[i].HUC_8;
 
 				// get the modelPOR mean and convert from string to float
@@ -450,13 +453,39 @@ var map = (function(map, $, d3) {
 				// find the corresponding HUC8 inside the geojson
 				for (var j = 0; j < json_huc8.features.length; j++) {
 
-					// get the json HUC8 name
+					// get the json HUC8 number
 					var json_HUC_8 = json_huc8.features[j].properties.HUC_8;
 
 					if (modelPOR_HUC8 === json_HUC_8) {
 
 						// copy the modelPOR values into the json
 						json_huc8.features[j].properties.modelPOR_mean = modelPOR_mean;
+
+						// stop looking through the geojson
+						break;
+					}
+				}	
+			}
+			
+			// merge the huc8_names and geojson
+			for (var i = 0; i < huc8_names.length; i++) {
+
+				// get the HUC8 number
+				var huc8_number = huc8_names[i].HUC_8;
+
+				// get the huc8_names NAME
+				var huc8_name = huc8_names[i].NAME;
+
+				// find the corresponding HUC8 inside the geojson
+				for (var j = 0; j < json_huc8.features.length; j++) {
+
+					// get the json HUC8 number
+					var json_HUC_8 = json_huc8.features[j].properties.HUC_8;
+
+					if (huc8_number === json_HUC_8) {
+
+						// copy the huc8_names NAME into the json
+						json_huc8.features[j].properties.huc8_name = huc8_name;
 
 						// stop looking through the geojson
 						break;
@@ -518,11 +547,12 @@ var map = (function(map, $, d3) {
 				.data(json_huc8.features)
 				.on("mouseover", function(d) {
 					mouseoverHUC8 = d.properties.HUC_8;
+					mouseoverHUC8name = d.properties.huc8_name;
 					meanValuePOR = d.properties.modelPOR_mean;
 					d3.select(this)
 						.transition().duration(10)
 						.attr("stroke-width", 3);
-					getHUC8data(modelTS, mouseoverHUC8, meanValuePOR);
+					getHUC8data(modelTS, mouseoverHUC8, mouseoverHUC8name, meanValuePOR);
 				})
 				.on("mouseout", function(d) {
 					d3.select(this)
@@ -551,7 +581,7 @@ var map = (function(map, $, d3) {
 				});
 			
 			//console.log("hello#3");
-			populateChart(mouseoverHUC8, data_year, data_inyr, meanValuePOR);
+			populateChart(mouseoverHUC8, mouseoverHUC8name, data_year, data_inyr, meanValuePOR);
 			colorMap();
 			populateLegend();
 			//console.log("hello#4");
@@ -559,7 +589,7 @@ var map = (function(map, $, d3) {
 	}
 	
 	// Get the time series data for the HUC8 on mouseover
-	var getHUC8data = function(modelTS, mouseoverHUC8, meanValuePOR) {
+	var getHUC8data = function(modelTS, mouseoverHUC8, mouseoverHUC8name, meanValuePOR) {
 		//console.log("at getHUC8data");
 		//console.log(mouseoverHUC8);
 		//console.log(meanValuePOR);
@@ -581,11 +611,11 @@ var map = (function(map, $, d3) {
 			}
 		}
 		
-		populateChart(mouseoverHUC8, data_year, data_inyr, meanValuePOR);
+		populateChart(mouseoverHUC8, mouseoverHUC8name, data_year, data_inyr, meanValuePOR);
 	}
 	
 	// Populate chart
-	var populateChart = function(mouseoverHUC8, data_year, data_inyr, meanValuePOR) {
+	var populateChart = function(mouseoverHUC8, mouseoverHUC8name, data_year, data_inyr, meanValuePOR) {
 		//console.log("at populateChart");
 		
 		var chartLabel = '';
@@ -604,6 +634,7 @@ var map = (function(map, $, d3) {
 		$('#chart-title').text(chartLabel);
 		$('#chart-header1').html('<img src="images/thick-blue-line.png" alt="(thick blue line)" align="middle"> HUC8: ' + mouseoverHUC8);
 		$('#chart-header2').html('<img src="images/small-black-dot.png" alt="(small black dot)" align="middle"> Selected year: ' + sliderYear);
+		$('#huc-name-text').html('HUC8: ' + mouseoverHUC8 + ' &#x2013; ' + mouseoverHUC8name);
 		
 		x.domain(d3.extent(data_year));
 		// y.domain(d3.extent(data_inyr));
