@@ -118,6 +118,13 @@ svg {
 }
 
 #credit-line {
-	text-align: right;
 	font: 10px serif;
+}
+
+.alignleft {
+	float: left;
+}
+
+.alignright {
+	float: right;
 }
