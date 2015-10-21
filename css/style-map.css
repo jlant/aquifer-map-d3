@@ -1,40 +1,11 @@
-svg {
-	fill: none;
-	stroke: black;
-}
-
 .top-titles {
 	margin-bottom: 10px;
 	font-size: 18px;
 	font-weight: bold;
 }
 
-#huc-name-text {
-	margin-top: 25px;
-}
-
 #chart-title {
 	font-weight: bold;
-}
-
-.btn {
-    width: 110px;
-}
-
-.tooltip {
-	visibility: hidden;
-}
-
-.tooltip_HUC8 {
-	position: absolute;
-	background: black;
-	padding: 4px;
-	font: 12px sans-serif;
-	color: white;
-	opacity: 0.9;
-	border: 0px;
-	border-radius: 4px;
-	visibility: hidden;
 }
 
 #legend-box {
@@ -42,6 +13,45 @@ svg {
 	border: 1px solid #ccc;
 	padding-left: 20px;
 	overflow: auto;
+}
+
+.btn {
+    width: 110px;
+}
+
+#huc-name-text {
+	margin-top: 25px;
+}
+
+.padding-tweak {
+	padding-left: 10px;
+}
+
+#slider-box {
+	background-color: #E0E0E0;
+	padding: 7px;
+}
+
+.slider {
+	margin-left: 30px;
+}
+
+#yearLabel {
+	margin-left: 30px;
+}
+
+#button-reset {
+	float: right;
+}
+
+svg {
+	fill: none;
+	stroke: black;
+}
+
+#map-aquifer-container {
+	border: 1px solid #ccc;
+	margin-top: 20px;
 }
 
 .axis path,
@@ -72,28 +82,6 @@ svg {
     stroke-width: 0.5px;
 }
 
-#slider-box {
-	background-color: #E0E0E0;
-	padding: 7px;
-}
-
-.slider {
-	margin-left: 30px;
-}
-
-#yearLabel {
-	margin-left: 30px;
-}
-
-#button-reset {
-	float: right;
-}
-
-#map-aquifer-container {
-	border: 1px solid #ccc;
-	margin-top: 20px;
-}
-
 .bounding-box {
 	fill: white;
 	stroke: #ccc;
@@ -115,6 +103,22 @@ svg {
 .huc8s-outline {
 	fill: white;
 	fill-opacity: 0.0;
+}
+
+.tooltip {
+	visibility: hidden;
+}
+
+.tooltip_HUC8 {
+	position: absolute;
+	background: black;
+	padding: 4px;
+	font: 12px sans-serif;
+	color: white;
+	opacity: 0.9;
+	border: 0px;
+	border-radius: 4px;
+	visibility: hidden;
 }
 
 #credit-line {

@@ -4,7 +4,7 @@ An interactive map to highlight the results of the study:
 Hydrologic Budget and Conditions of Permian, Pennsylvanian, and Mississippian aquifers in the Appalachian Plateaus Physiographic Province
 
 ## Version
-1.2
+1.3
 
 ## Features
 * uses data visualization library [D3.js](http://d3js.org/)
