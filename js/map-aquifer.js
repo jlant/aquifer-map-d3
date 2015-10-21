@@ -248,7 +248,7 @@ var map = (function(map, $, d3) {
 		container.attr("transform", 'scale(' + mapWidth/mapOrigWidth + ')');
 	}
 	
-	// Generate chart
+	// Generate the chart
 	var generateChart = function() {
 		//console.log("at generateChart");
 		
@@ -312,7 +312,7 @@ var map = (function(map, $, d3) {
 			.attr("class", "chartPoint");
 	}
 	
-	// Generate legend
+	// Generate the legend
 	var generateLegend = function() {
 		//console.log("at generateLegend");
 		
@@ -379,7 +379,8 @@ var map = (function(map, $, d3) {
 		
 		loadData();
 	}
-
+	
+	// Load the data
 	var loadData = function() {
 		//console.log("at loadData");
 		
@@ -403,7 +404,6 @@ var map = (function(map, $, d3) {
 		
 		function drawMap(error, modelVar, modelTS, modelPOR, huc8_names, json_conus, json_huc8) {
 			if (error) { return console.error(error) };
-			//console.log("hello#1");
 			
 			// set the input domain for the color scale
 			color.domain([
@@ -514,10 +514,6 @@ var map = (function(map, $, d3) {
 				}
 			}
 			
-			//console.log(d3.extent(data_year));
-			//console.log(d3.extent(data_inyr));
-			//console.log("hello#2");
-			
 			// bind the data and create one path for each geojson feature
 			container.selectAll(".huc8s-fill")
 				.data(json_huc8.features)
@@ -580,19 +576,16 @@ var map = (function(map, $, d3) {
 						.style("left", (d3.event.pageX + 10) + "px");
 				});
 			
-			//console.log("hello#3");
+			// apply the loaded data to the chart, map, and legend
 			populateChart(mouseoverHUC8, mouseoverHUC8name, data_year, data_inyr, meanValuePOR);
 			colorMap();
 			populateLegend();
-			//console.log("hello#4");
 		}
 	}
 	
 	// Get the time series data for the HUC8 on mouseover
 	var getHUC8data = function(modelTS, mouseoverHUC8, mouseoverHUC8name, meanValuePOR) {
 		//console.log("at getHUC8data");
-		//console.log(mouseoverHUC8);
-		//console.log(meanValuePOR);
 		
 		// get the time-series data for the selected HUC8
 		var hts = $.grep(modelTS, function(obj){return obj.HUC_8 === mouseoverHUC8;});
@@ -614,7 +607,7 @@ var map = (function(map, $, d3) {
 		populateChart(mouseoverHUC8, mouseoverHUC8name, data_year, data_inyr, meanValuePOR);
 	}
 	
-	// Populate chart
+	// Populate the chart
 	var populateChart = function(mouseoverHUC8, mouseoverHUC8name, data_year, data_inyr, meanValuePOR) {
 		//console.log("at populateChart");
 		
@@ -691,8 +684,6 @@ var map = (function(map, $, d3) {
 	var populateLegend = function() {
 		//console.log("at populateLegend");
 		
-		//console.log(color.domain());
-		
 		// color
 		legend = svg.selectAll(".legend-rect")
 			.data(color.range())
@@ -707,18 +698,13 @@ var map = (function(map, $, d3) {
 				return format(+legend_label[0]) + " \u2013 " + format(+legend_label[1]);
 			});
 	}
-
-	// End stuff
-	console.log("hello#0a");
+	
 	return map;
 	
 }(map || {}, jQuery, d3 ))
 
 map.preInit();
-console.log("hello#0b");
 
 jQuery(document).ready(function(){
-	console.log("hello#0c");
 	map.initMap();
-	console.log("hello#0d");
 })
