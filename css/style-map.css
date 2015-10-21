@@ -9,8 +9,8 @@ svg {
 	font-weight: bold;
 }
 
-.huc-name {
-	margin-top: 20px;
+#huc-name-text {
+	margin-top: 25px;
 }
 
 #chart-title {
