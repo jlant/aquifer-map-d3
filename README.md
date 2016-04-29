@@ -6,7 +6,7 @@ A data visualization project using D3.js (https://d3js.org/) to highlight the re
 
 The project can be found here:
 
-USGS (private) staging area - http://staging-ky.water.usgs.gov/appalachianplateaus/
+USGS (private) staging area - http://staging-ky.water.usgs.gov/appalachianplateaus/  
 USGS (public) web site - http://va.water.usgs.gov/appalachianplateaus/sir2015-5106/
 
 
