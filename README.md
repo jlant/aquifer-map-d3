@@ -1,6 +1,6 @@
 # aquifer-map-d3
 
-An interactive map to highlight the results of the following [USGS](https://www.usgs.gov/) hydrologic budget study:
+A data visualization project using D3.js (https://d3js.org/) to highlight the results of the following [USGS](https://www.usgs.gov/) hydrologic budget study:
 
 [Hydrologic Budget and Conditions of Permian, Pennsylvanian, and Mississippian aquifers in the Appalachian Plateaus Physiographic Province](http://pubs.usgs.gov/sir/2015/5106/sir20155106.pdf)
 
@@ -22,9 +22,9 @@ USGS (public) web site - http://va.water.usgs.gov/appalachianplateaus/sir2015-51
 * Has a slider bar to select year of SWB model for display 
 * Mobile platform compatible
 
-## Documentation
+## Additional Study Information
 
-http://va.water.usgs.gov/appalachianplateaus/study.html
+http://va.water.usgs.gov/appalachianplateaus/study.html  
 http://va.water.usgs.gov/appalachianplateaus/pdfs/USGS_AppPlatGW_infosheet.pdf
 
 ## License
