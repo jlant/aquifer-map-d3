@@ -9,6 +9,8 @@ The project can be found here:
 USGS (private) staging area - http://staging-ky.water.usgs.gov/appalachianplateaus/  
 USGS (public) web site - http://va.water.usgs.gov/appalachianplateaus/sir2015-5106/
 
+Screenshot: 
+
 ![aquifer-map](images/aquifer-map.png)
 
 ## Version
