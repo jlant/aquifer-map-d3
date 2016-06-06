@@ -6,8 +6,8 @@ A data visualization project using [D3.js] to highlight the results of the follo
 
 The project can be found here:
 
-USGS (private) staging area - http://staging-ky.water.usgs.gov/appalachianplateaus/  
-USGS (public) web site - http://va.water.usgs.gov/appalachianplateaus/sir2015-5106/
+Data visualization website - https://jlant-usgs.github.io/aquifer-map-d3/  
+USGS hydrologic budget study website - http://va.water.usgs.gov/appalachianplateaus/sir2015-5106/
 
 Screenshot:
 
