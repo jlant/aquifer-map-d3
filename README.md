@@ -6,7 +6,7 @@ A data visualization project using [D3.js] to highlight the results of the follo
 
 The project can be found here:
 
-Data visualization website - https://jlant-usgs.github.io/aquifer-map-d3/  
+Data visualization website - https://jlant.github.io/aquifer-map-d3/
 USGS hydrologic budget study website - http://va.water.usgs.gov/appalachianplateaus/sir2015-5106/
 
 Screenshot:
