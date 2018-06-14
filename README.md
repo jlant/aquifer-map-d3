@@ -4,8 +4,6 @@ A data visualization project using [D3.js] to highlight the results of the follo
 
 [Hydrologic Budget and Conditions of Permian, Pennsylvanian, and Mississippian aquifers in the Appalachian Plateaus Physiographic Province](http://pubs.usgs.gov/sir/2015/5106/sir20155106.pdf)
 
-The project can be found here:
-
 Data visualization website - https://jlant.github.io/aquifer-map-d3/  
 USGS hydrologic budget study website - http://va.water.usgs.gov/appalachianplateaus/sir2015-5106/
 
